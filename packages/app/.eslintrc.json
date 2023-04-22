@@ -1,0 +1,8 @@
+{
+  "extends": ["@sigma-audiobooks/eslint-config"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./packages/app/tsconfig.json"
+  }
+}
