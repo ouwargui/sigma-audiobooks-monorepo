@@ -1,6 +1,6 @@
 import React from 'react';
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {AppRouter} from '@sigma-audiobooks/shared';
 import {createTRPCReact, httpBatchLink} from '@trpc/react-query';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
@@ -19,7 +19,7 @@ export default function App() {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <View style={styles.container}>
+        <View className="flex-1 bg-white items-center justify-center">
           <Text>Open up App.tsx to start working on your app!</Text>
           <Teste />
           <StatusBar style="auto" />
@@ -42,12 +42,3 @@ function Teste() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
