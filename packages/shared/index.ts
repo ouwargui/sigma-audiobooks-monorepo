@@ -1,2 +1,2 @@
-export {appRouter} from './trpc/server';
-export type {AppRouter} from './trpc/server';
+export {trpcExpressMiddleware} from './trpc';
+export type {AppRouter} from './trpc';

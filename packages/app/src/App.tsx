@@ -1,11 +1,10 @@
 import React from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {Text, View} from 'react-native';
-import {AppRouter} from '@sigma-audiobooks/shared';
-import {createTRPCReact, httpBatchLink} from '@trpc/react-query';
+import {httpBatchLink} from '@trpc/react-query';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {trpc} from './utils/trpc';
 
-const trpc = createTRPCReact<AppRouter>();
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
@@ -30,15 +29,15 @@ export default function App() {
 }
 
 function Teste() {
-  const userListQuery = trpc.userList.useQuery();
-  const userByIdQuery = trpc.userById.useQuery('1');
+  const userListQuery = trpc.books.getAll.useQuery();
+  const userByIdQuery = trpc.reviews.getById.useQuery(1);
 
   return (
     <View>
       {userListQuery.data?.map((user) => (
-        <Text key={user.id}>{user.name}</Text>
+        <Text key={user.id}>{user.author}</Text>
       ))}
-      <Text>{userByIdQuery.data?.name}</Text>
+      <Text>{userByIdQuery.data?.title}</Text>
     </View>
   );
 }
