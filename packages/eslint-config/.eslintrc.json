@@ -11,6 +11,7 @@
     "plugin:react/recommended",
     "plugin:react-hooks/recommended"
   ],
+  "ignorePatterns": ["**/*.js"],
   "plugins": [
     "@typescript-eslint",
     "prettier",
