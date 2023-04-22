@@ -1,9 +1,10 @@
-import {router} from '..';
-import {booksRouter} from './books';
-import {reviewsRouter} from './reviews';
+import {setupBookRouter} from './books';
+import {setupReviewRouter} from './reviews';
+import type {Router, PublicProcedure} from '..';
 
-export const appRouter = router({
-  books: booksRouter,
-  reviews: reviewsRouter,
-});
-export type AppRouter = typeof appRouter;
+export function setupRouter(trpcRouter: Router, pProcedure: PublicProcedure) {
+  return trpcRouter({
+    books: setupBookRouter(trpcRouter, pProcedure),
+    reviews: setupReviewRouter(trpcRouter, pProcedure),
+  });
+}
