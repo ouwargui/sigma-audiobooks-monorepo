@@ -3,6 +3,6 @@
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": "./packages/server/tsconfig.json"
+    "project": "./packages/shared/tsconfig.json"
   }
 }

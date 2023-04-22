@@ -1,0 +1,12 @@
+{
+  "name": "@sigma-audiobooks/shared",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@sigma-audiobooks/eslint-config": "*",
+    "@trpc/client": "^10.21.1",
+    "@trpc/server": "^10.21.1",
+    "zod": "^3.21.4"
+  }
+}

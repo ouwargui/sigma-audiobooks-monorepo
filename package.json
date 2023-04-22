@@ -4,6 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "private": "true",
+  "scripts": {
+    "dev:app": "yarn workspace @sigma-audiobooks/app start",
+    "dev:server": "yarn workspace @sigma-audiobooks/server start"
+  },
   "workspaces": [
     "packages/*"
   ],
