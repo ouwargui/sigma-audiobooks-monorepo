@@ -4,8 +4,9 @@ import Wrapper from '../components/wrapper';
 import ScalableButton from '../components/scalable-button';
 import {Ionicons} from '@expo/vector-icons';
 import {trpc} from '../utils/trpc';
+import {HomeNavProps} from '../routes/types';
 
-const Home: React.FC = () => {
+const Home: React.FC<HomeNavProps> = ({navigation}) => {
   const discoverBooks = trpc.books.getAll.useQuery();
 
   if (!discoverBooks.data && discoverBooks.isLoading) {
@@ -25,7 +26,7 @@ const Home: React.FC = () => {
           renderItem={({item}) => (
             <ScalableButton
               scaleTo={0.95}
-              onPress={() => console.log('coverart')}
+              onPress={() => navigation.navigate('Book', item)}
             >
               <View className="w-36 aspect-[9/16] rounded-lg overflow-hidden">
                 <Image
@@ -54,7 +55,9 @@ const Home: React.FC = () => {
                 <Text className="font-semi text-zinc-500">Now reading: 1K</Text>
               </View>
               <View style={{gap: -5}}>
-                <Text className="font-semi text-zinc-500">44K</Text>
+                <Text className="font-semi text-zinc-500">
+                  {discoverBooks.data?.at(0)?.reviews?.length ?? 0}
+                </Text>
                 <Text className="font-semi text-zinc-500">Reviews</Text>
               </View>
             </View>

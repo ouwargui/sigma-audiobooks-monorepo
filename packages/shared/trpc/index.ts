@@ -1,5 +1,10 @@
 import {prisma} from '@sigma-audiobooks/db';
-import {inferAsyncReturnType, initTRPC} from '@trpc/server';
+import {
+  inferProcedureOutput,
+  inferProcedureInput,
+  inferAsyncReturnType,
+  initTRPC,
+} from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import {setupRouter} from './routes';
 
@@ -30,3 +35,4 @@ export const trpcExpressMiddleware = trpcExpress.createExpressMiddleware({
 });
 
 export type AppRouter = typeof appRouter;
+export type {inferProcedureOutput, inferProcedureInput};

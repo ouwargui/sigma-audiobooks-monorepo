@@ -13,6 +13,7 @@
     "@expo-google-fonts/red-hat-mono": "^0.2.3",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
+    "@react-navigation/native-stack": "^6.9.12",
     "@sigma-audiobooks/shared": "*",
     "@tanstack/react-query": "^4.29.3",
     "@trpc/react-query": "^10.21.1",

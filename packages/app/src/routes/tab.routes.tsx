@@ -9,8 +9,9 @@ import Library from '../screens/library';
 import Profile from '../screens/profile';
 import ScalableButton from '../components/scalable-button';
 import {useNavigation} from '@react-navigation/native';
+import {TabParamList} from './types';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabRoutes: React.FC = () => {
   const navigation = useNavigation();
