@@ -1,11 +1,12 @@
 import {BlurView} from 'expo-blur';
-import React, {PropsWithChildren} from 'react';
+import React, {PropsWithChildren, useState} from 'react';
 import {View, Text} from 'react-native';
 import Animated, {
   interpolate,
+  interpolateColor,
+  runOnJS,
   useAnimatedScrollHandler,
-  useSharedValue,
-  withTiming,
+  useAnimatedStyle,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
@@ -17,15 +18,30 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 const Wrapper: React.FC<Props> = ({children, title}) => {
   const insets = useSafeAreaInsets();
-  const scrollYOffset = useSharedValue(0);
+  const [scrollYOffset, setScrollYOffset] = useState(0);
 
   const onScroll = useAnimatedScrollHandler({
     onScroll(event) {
-      scrollYOffset.value = withTiming(
-        interpolate(event.contentOffset.y, [0, 50], [0, 40], 'clamp'),
+      const value = interpolate(
+        event.contentOffset.y,
+        [0, 50],
+        [0, 40],
+        'clamp',
       );
-      console.log(scrollYOffset.value);
+
+      runOnJS(setScrollYOffset)(value);
     },
+  });
+
+  const animatedBorder = useAnimatedStyle(() => {
+    return {
+      borderBottomColor: interpolateColor(
+        scrollYOffset,
+        [0, 50],
+        ['#fff', '#E4E4E7'],
+      ),
+      borderBottomWidth: 1,
+    };
   });
 
   return (
@@ -38,10 +54,10 @@ const Wrapper: React.FC<Props> = ({children, title}) => {
         <View className="flex-1">{children}</View>
       </Animated.ScrollView>
       <AnimatedBlurView
-        animatedProps={{intensity: scrollYOffset.value}}
+        intensity={scrollYOffset}
         tint="light"
         className="top-0 left-0 right-0 absolute justify-end items-start"
-        style={{height: insets.top * 2}}
+        style={[{height: insets.top * 2}, animatedBorder]}
       >
         <Text className="font-semi pl-3 text-5xl text-zinc-800">{title}</Text>
       </AnimatedBlurView>

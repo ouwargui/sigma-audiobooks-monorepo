@@ -1,10 +1,11 @@
 import React from 'react';
-import {FlatList, Image, Text, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import Wrapper from '../components/wrapper';
 import ScalableButton from '../components/scalable-button';
 import {Ionicons} from '@expo/vector-icons';
 import {trpc} from '../utils/trpc';
 import {HomeNavProps} from '../routes/types';
+import BookCoverArt from '../components/book-cover-art';
 
 const Home: React.FC<HomeNavProps> = ({navigation}) => {
   const discoverBooks = trpc.books.getAll.useQuery();
@@ -22,18 +23,15 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           data={discoverBooks.data}
+          keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <View className="w-3" />}
           renderItem={({item}) => (
             <ScalableButton
+              key={item.id}
               scaleTo={0.95}
               onPress={() => navigation.navigate('Book', item)}
             >
-              <View className="w-36 aspect-[9/16] rounded-lg overflow-hidden">
-                <Image
-                  className="w-full h-full"
-                  source={{uri: item.coverArtUrl}}
-                />
-              </View>
+              <BookCoverArt coverArtUrl={item.coverArtUrl} />
             </ScalableButton>
           )}
         />
