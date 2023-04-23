@@ -1,6 +1,6 @@
 import {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
 import React, {PropsWithChildren} from 'react';
-import {Pressable} from 'react-native';
+import {Pressable, PressableProps} from 'react-native';
 import Animated, {
   Easing,
   Extrapolate,
@@ -18,7 +18,8 @@ type Props = PropsWithChildren<{
   onPress: () => void;
   scaleTo?: number;
   disabled?: boolean;
-  props?: BottomTabBarButtonProps;
+  bottomTabProps?: BottomTabBarButtonProps;
+  props?: PressableProps;
 }>;
 
 const ScalableButton: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const ScalableButton: React.FC<Props> = ({
   onPress,
   scaleTo = 0.85,
   disabled = false,
+  bottomTabProps,
   props,
 }) => {
   const isPressed = useSharedValue(false);
@@ -55,6 +57,7 @@ const ScalableButton: React.FC<Props> = ({
       onPressIn={() => (isPressed.value = true)}
       onPressOut={() => (isPressed.value = false)}
       style={scaleAnimationStyle}
+      {...bottomTabProps}
       {...props}
     >
       {children}
