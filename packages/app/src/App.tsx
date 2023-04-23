@@ -17,6 +17,7 @@ import {
   RedHatMono_700Bold_Italic,
 } from '@expo-google-fonts/red-hat-mono';
 import Router from './routes';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const trpcClient = trpc.createClient({
   links: [
@@ -51,8 +52,10 @@ const App: React.FC = () => {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <Router />
-        <StatusBar style="auto" />
+        <GestureHandlerRootView style={{flex: 1}}>
+          <Router />
+          <StatusBar style="auto" />
+        </GestureHandlerRootView>
       </QueryClientProvider>
     </trpc.Provider>
   );

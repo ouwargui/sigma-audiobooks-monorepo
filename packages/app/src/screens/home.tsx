@@ -31,7 +31,9 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
               scaleTo={0.95}
               onPress={() => navigation.navigate('Book', item)}
             >
-              <BookCoverArt coverArtUrl={item.coverArtUrl} />
+              <View className="w-36">
+                <BookCoverArt coverArtUrl={item.coverArtUrl} />
+              </View>
             </ScalableButton>
           )}
         />

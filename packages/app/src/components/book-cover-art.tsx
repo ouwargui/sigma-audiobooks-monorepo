@@ -7,7 +7,7 @@ type Props = {
 
 const BookCoverArt: React.FC<Props> = ({coverArtUrl}) => {
   return (
-    <View className="w-36 aspect-[9/16] rounded-xl overflow-hidden">
+    <View className="w-full aspect-[9/16] rounded-xl overflow-hidden">
       <Image className="w-full h-full" source={{uri: coverArtUrl}} />
     </View>
   );

@@ -61,7 +61,9 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
       >
         <View className="flex-1">
           <View className="justify-center items-center" style={{gap: 10}}>
-            <BookCoverArt coverArtUrl={book.coverArtUrl} />
+            <View className="w-36">
+              <BookCoverArt coverArtUrl={book.coverArtUrl} />
+            </View>
             <View
               style={{gap: 5}}
               className="border-[1px] border-zinc-500 p-1 flex-row rounded-full justify-between items-center"
