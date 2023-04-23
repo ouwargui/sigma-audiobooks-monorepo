@@ -19,7 +19,13 @@ const TabRoutes: React.FC = () => {
   };
 
   return (
-    <Tab.Navigator screenOptions={{headerShown: false, tabBarShowLabel: false}}>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {borderTopWidth: 0},
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={Home}

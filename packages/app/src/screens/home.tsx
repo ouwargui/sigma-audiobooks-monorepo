@@ -1,11 +1,12 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {Text} from 'react-native';
+import Wrapper from '../components/wrapper';
 
 const Home: React.FC = () => {
   return (
-    <View>
-      <Text>Home</Text>
-    </View>
+    <Wrapper title="Books">
+      <Text>hello world</Text>
+    </Wrapper>
   );
 };
 

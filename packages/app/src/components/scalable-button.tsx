@@ -1,5 +1,5 @@
 import {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import {Pressable} from 'react-native';
 import Animated, {
   Easing,
@@ -14,13 +14,12 @@ import Animated, {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const timingConfig = {duration: 50, easing: Easing.linear};
 
-type Props = {
-  children: React.ReactNode;
+type Props = PropsWithChildren<{
   onPress: () => void;
   scaleTo?: number;
   disabled?: boolean;
   props?: BottomTabBarButtonProps;
-};
+}>;
 
 const ScalableButton: React.FC<Props> = ({
   children,
