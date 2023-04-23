@@ -19,7 +19,7 @@ type Props = PropsWithChildren<{
   scaleTo?: number;
   disabled?: boolean;
   bottomTabProps?: BottomTabBarButtonProps;
-  props?: PressableProps;
+  style?: PressableProps['style'];
 }>;
 
 const ScalableButton: React.FC<Props> = ({
@@ -28,7 +28,7 @@ const ScalableButton: React.FC<Props> = ({
   scaleTo = 0.85,
   disabled = false,
   bottomTabProps,
-  props,
+  style,
 }) => {
   const isPressed = useSharedValue(false);
   const scale = useDerivedValue(() => {
@@ -47,7 +47,6 @@ const ScalableButton: React.FC<Props> = ({
 
     return {
       transform: [{scale: scaleValue}],
-      flex: 1,
     };
   });
   return (
@@ -56,9 +55,8 @@ const ScalableButton: React.FC<Props> = ({
       onPress={onPress}
       onPressIn={() => (isPressed.value = true)}
       onPressOut={() => (isPressed.value = false)}
-      style={scaleAnimationStyle}
+      style={[scaleAnimationStyle, style]}
       {...bottomTabProps}
-      {...props}
     >
       {children}
     </AnimatedPressable>

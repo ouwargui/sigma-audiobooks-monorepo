@@ -4,5 +4,8 @@
     "ecmaVersion": "latest",
     "sourceType": "module",
     "project": "./packages/app/tsconfig.json"
+  },
+  "rules": {
+    "react/prop-types": "off"
   }
 }
