@@ -6,23 +6,28 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Ionicons} from '@expo/vector-icons';
 import {BlurView} from 'expo-blur';
 import Animated, {
+  FadeInDown,
+  FadeOutDown,
   interpolate,
   interpolateColor,
   runOnJS,
   useAnimatedScrollHandler,
   useAnimatedStyle,
+  useSharedValue,
 } from 'react-native-reanimated';
 import ScalableButton from '../components/scalable-button';
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
-const Book: React.FC<BookNavProps> = ({route}) => {
+const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   const book = route.params;
   const insets = useSafeAreaInsets();
   const [scrollYOffset, setScrollYOfsset] = useState(0);
+  const scrollY = useSharedValue(0);
 
   const onScroll = useAnimatedScrollHandler({
     onScroll(event) {
+      scrollY.value = event.contentOffset.y;
       runOnJS(setScrollYOfsset)(
         interpolate(event.contentOffset.y, [0, 50], [0, 40], 'clamp'),
       );
@@ -39,6 +44,10 @@ const Book: React.FC<BookNavProps> = ({route}) => {
       borderBottomWidth: 1,
     };
   });
+
+  const handlePlayListen = () => {
+    navigation.navigate('main', {screen: 'Play', params: book});
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -124,9 +133,25 @@ const Book: React.FC<BookNavProps> = ({route}) => {
         intensity={scrollYOffset}
         style={[{paddingTop: insets.top}, animatedBorder]}
       >
-        <Ionicons name="chevron-back" size={24} color="#3f3f46" />
+        <ScalableButton onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={24} color="#3f3f46" />
+        </ScalableButton>
         <Ionicons name="send-outline" size={24} color="#3f3f46" />
       </AnimatedBlurView>
+      {scrollY.value < 50 && (
+        <Animated.View
+          entering={FadeInDown.duration(300)}
+          exiting={FadeOutDown.duration(300)}
+          style={[{paddingBottom: insets.bottom}]}
+          className="absolute bottom-0 left-0 right-0 flex-row justify-center items-center"
+        >
+          <ScalableButton style={{flex: 1}} onPress={handlePlayListen}>
+            <View className="flex-1 py-4 mx-10 justify-center items-center rounded-full bg-zinc-950">
+              <Text className="text-zinc-50 font-bold text-lg">Listen</Text>
+            </View>
+          </ScalableButton>
+        </Animated.View>
+      )}
     </View>
   );
 };
