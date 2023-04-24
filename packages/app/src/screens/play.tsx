@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {View, Text, SafeAreaView, useWindowDimensions} from 'react-native';
 import BookCoverArt from '../components/book-cover-art';
 import {PlayNavProps} from '../routes/types';
@@ -6,11 +6,14 @@ import {Ionicons} from '@expo/vector-icons';
 import ScalableButton from '../components/scalable-button';
 import Animated, {
   interpolate,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import {usePlayer} from '../hooks/usePlayer';
+import {convertMsToTime} from '../utils/time-format';
 
 const VOLUME_SLIDER_SIZE = 240;
 const VOLUME_INTERVAL = 100;
@@ -20,16 +23,17 @@ type Intervals = {
   volumeDownInterval?: NodeJS.Timer;
 };
 
-const Play: React.FC<PlayNavProps> = ({route}) => {
-  const book = route.params;
+const Play: React.FC<PlayNavProps> = () => {
   const previousSliderOffsetX = useSharedValue(0);
-  const sliderOffsetX = useSharedValue(0);
   const isKnobActive = useSharedValue(false);
   const previousVolumeSliderOffsetX = useSharedValue(0);
-  const volumeSliderOffsetX = useSharedValue(0);
+  const player = usePlayer();
   const isVolumeKnobActive = useSharedValue(false);
-  const [isBookPlaying, setIsBookPlaying] = useState(false);
   const {width} = useWindowDimensions();
+  const sliderOffsetX = useSharedValue(0);
+  const volumeSliderOffsetX = useSharedValue(
+    player.volume * VOLUME_SLIDER_SIZE,
+  );
   const [intervals, setIntervals] = useState<Intervals>({});
 
   const trackingDragGesture = useMemo(
@@ -81,18 +85,25 @@ const Play: React.FC<PlayNavProps> = ({route}) => {
         })
         .onUpdate((e) => {
           const value = previousVolumeSliderOffsetX.value + e.translationX;
-          console.log(value);
           volumeSliderOffsetX.value = interpolate(
             value,
             [0, VOLUME_SLIDER_SIZE],
             [0, VOLUME_SLIDER_SIZE],
             'clamp',
           );
+          runOnJS(player.changeVolume)(
+            volumeSliderOffsetX.value / VOLUME_SLIDER_SIZE,
+          );
         })
         .onEnd(() => {
           isVolumeKnobActive.value = false;
         }),
-    [isVolumeKnobActive, previousVolumeSliderOffsetX, volumeSliderOffsetX],
+    [
+      isVolumeKnobActive,
+      player,
+      previousVolumeSliderOffsetX,
+      volumeSliderOffsetX,
+    ],
   );
 
   const volumeSliderAnimatedStyle = useAnimatedStyle(() => {
@@ -119,6 +130,7 @@ const Play: React.FC<PlayNavProps> = ({route}) => {
   const onPressVolumeUp = () => {
     const oldVolume = volumeSliderOffsetX.value / VOLUME_SLIDER_SIZE;
     const newVolume = oldVolume + 0.1 > 1 ? 1 : oldVolume + 0.1;
+    void player.changeVolume(newVolume);
     volumeSliderOffsetX.value = newVolume * VOLUME_SLIDER_SIZE;
   };
 
@@ -144,6 +156,7 @@ const Play: React.FC<PlayNavProps> = ({route}) => {
   const onPressVolumeDown = () => {
     const oldVolume = volumeSliderOffsetX.value / VOLUME_SLIDER_SIZE;
     const newVolume = oldVolume - 0.1 < 0 ? 0 : oldVolume - 0.1;
+    void player.changeVolume(newVolume);
     volumeSliderOffsetX.value = newVolume * VOLUME_SLIDER_SIZE;
   };
 
@@ -166,14 +179,26 @@ const Play: React.FC<PlayNavProps> = ({route}) => {
     }
   };
 
-  const togglePlayBook = () => {
-    setIsBookPlaying((prev) => !prev);
+  const togglePlayPause = async () => {
+    if (player.isPlaying) {
+      await player.pause();
+    } else {
+      await player.play(1);
+    }
   };
+
+  useEffect(() => {
+    if (!player.currentMillis || !player.durationMillis) return;
+
+    const millisPercentage =
+      (player.currentMillis * 100) / player.durationMillis;
+    sliderOffsetX.value = withTiming(millisPercentage);
+  }, [player.currentMillis, player.durationMillis, sliderOffsetX]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="w-44 self-center mt-4">
-        <BookCoverArt coverArtUrl={book.coverArtUrl} />
+        <BookCoverArt coverArtUrl={player.currentBook?.coverArtUrl ?? ''} />
         <View className="h-4" />
         <View className="flex-row justify-between items-center px-3">
           <ScalableButton onPress={() => console.log('bookmark')}>
@@ -190,9 +215,11 @@ const Play: React.FC<PlayNavProps> = ({route}) => {
       <View className="h-6" />
       <View className="flex-row mx-8 items-center justify-between">
         <View className="flex-1" style={{gap: -5}}>
-          <Text className="font-semi text-2xl text-zinc-800">{book.title}</Text>
+          <Text className="font-semi text-2xl text-zinc-800">
+            {player.currentBook?.title}
+          </Text>
           <Text className="font-regular text-base text-zinc-500">
-            {book.author}
+            {player.currentBook?.author}
           </Text>
         </View>
         <ScalableButton onPress={() => console.log('rate')}>
@@ -218,19 +245,25 @@ const Play: React.FC<PlayNavProps> = ({route}) => {
           </Animated.View>
         </GestureDetector>
       </View>
-      <View className="flex-row mx-8 justify-between">
-        <Text className="font-regular text-sm text-zinc-500">1:00:03</Text>
-        <Text className="font-regular text-sm text-zinc-500">Chapter 6/29</Text>
-        <Text className="font-regular text-sm text-zinc-500">5:14:29</Text>
+      <View className="flex-row px-8 justify-between w-full">
+        <Text className="font-regular text-sm text-zinc-500">
+          {convertMsToTime(player.currentMillis ?? 0)}
+        </Text>
+        <Text className="font-regular text-sm text-zinc-500">
+          Chapter {player.currentChapter}/{player.currentBook?.totalChapters}
+        </Text>
+        <Text className="font-regular text-sm text-zinc-500">
+          {convertMsToTime(player.durationMillis ?? 0)}
+        </Text>
       </View>
       <View className="h-10" />
       <View className="flex-row mx-8 items-center justify-between">
         <ScalableButton>
           <Ionicons name="play-skip-back-outline" size={30} color="#09090b" />
         </ScalableButton>
-        <ScalableButton onPress={togglePlayBook}>
+        <ScalableButton onPress={() => void togglePlayPause()}>
           <Ionicons
-            name={isBookPlaying ? 'pause' : 'play'}
+            name={player.isPlaying ? 'pause' : 'play'}
             size={50}
             color="#09090b"
           />

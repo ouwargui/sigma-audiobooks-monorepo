@@ -18,6 +18,7 @@ import {
 } from '@expo-google-fonts/red-hat-mono';
 import Router from './routes';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import PlayerProvider from './providers/player.provider';
 
 const trpcClient = trpc.createClient({
   links: [
@@ -52,10 +53,12 @@ const App: React.FC = () => {
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <GestureHandlerRootView style={{flex: 1}}>
-          <Router />
-          <StatusBar style="auto" />
-        </GestureHandlerRootView>
+        <PlayerProvider>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <Router />
+            <StatusBar style="auto" />
+          </GestureHandlerRootView>
+        </PlayerProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );

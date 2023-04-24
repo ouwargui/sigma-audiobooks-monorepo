@@ -10,14 +10,18 @@ import Profile from '../screens/profile';
 import ScalableButton from '../components/scalable-button';
 import {useNavigation} from '@react-navigation/native';
 import {TabParamList} from './types';
+import {usePlayer} from '../hooks/usePlayer';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabRoutes: React.FC = () => {
+  const {currentBook} = usePlayer();
   const navigation = useNavigation();
   const navigateTo = (screenName: string) => {
     navigation.navigate(screenName as never);
   };
+
+  const playDisabled = !currentBook;
 
   return (
     <Tab.Navigator
@@ -64,13 +68,17 @@ const TabRoutes: React.FC = () => {
         component={Play}
         options={{
           tabBarButton: (props) => (
-            <ScalableButton {...props} onPress={() => navigateTo('Play')} />
+            <ScalableButton
+              disabled={playDisabled}
+              {...props}
+              onPress={() => navigateTo('Play')}
+            />
           ),
           tabBarIcon: ({focused}) => (
             <Ionicons
               name={focused ? 'play-circle' : 'play-circle-outline'}
               size={28}
-              color={focused ? 'black' : 'gray'}
+              color={playDisabled ? 'lightgray' : focused ? 'black' : 'gray'}
             />
           ),
         }}

@@ -18,6 +18,8 @@ model Book {
   totalChapters  Int
   coverArtUrl    String
   contentUrl     String
+  fileName       String   @default("")
+  fileExtension  String   @default("")
   tags           String[]
   totalListeners Int
   reviews        Review[]

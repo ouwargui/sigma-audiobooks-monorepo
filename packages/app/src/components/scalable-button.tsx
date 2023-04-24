@@ -1,6 +1,6 @@
 import {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
 import React, {PropsWithChildren} from 'react';
-import {Pressable, PressableProps} from 'react-native';
+import {GestureResponderEvent, Pressable, PressableProps} from 'react-native';
 import Animated, {
   Easing,
   Extrapolate,
@@ -16,9 +16,9 @@ const timingConfig = {duration: 50, easing: Easing.linear};
 
 type Props = PropsWithChildren<{
   onPress?: () => void;
-  onLongPress?: () => void;
-  onPressIn?: () => void;
-  onPressOut?: () => void;
+  onLongPress?: (e: GestureResponderEvent) => void;
+  onPressIn?: (e: GestureResponderEvent) => void;
+  onPressOut?: (e: GestureResponderEvent) => void;
   scaleTo?: number;
   disabled?: boolean;
   bottomTabProps?: BottomTabBarButtonProps;
@@ -60,13 +60,13 @@ const ScalableButton: React.FC<Props> = ({
       disabled={disabled}
       onPress={onPress}
       onLongPress={onLongPress}
-      onPressIn={() => {
+      onPressIn={(e) => {
         isPressed.value = true;
-        onPressIn?.();
+        onPressIn?.(e);
       }}
-      onPressOut={() => {
+      onPressOut={(e) => {
         isPressed.value = false;
-        onPressOut?.();
+        onPressOut?.(e);
       }}
       style={[scaleAnimationStyle, style]}
       {...bottomTabProps}

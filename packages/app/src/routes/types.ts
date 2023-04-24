@@ -7,14 +7,14 @@ import {
 } from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-type Book = inferProcedureOutput<AppRouter['books']['getAll']>[number];
+export type Book = inferProcedureOutput<AppRouter['books']['getAll']>[number];
 
 export type TabParamList = {
   Home: undefined;
   Search: undefined;
   Library: undefined;
   Profile: undefined;
-  Play: Book;
+  Play: undefined;
 };
 
 export type RootParamList = {

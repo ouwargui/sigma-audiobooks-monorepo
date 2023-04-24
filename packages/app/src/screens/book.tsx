@@ -16,11 +16,13 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import ScalableButton from '../components/scalable-button';
+import {usePlayer} from '../hooks/usePlayer';
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   const book = route.params;
+  const player = usePlayer();
   const insets = useSafeAreaInsets();
   const [scrollYOffset, setScrollYOfsset] = useState(0);
   const scrollY = useSharedValue(0);
@@ -46,7 +48,8 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   });
 
   const handlePlayListen = () => {
-    navigation.navigate('main', {screen: 'Play', params: book});
+    player.setCurrentBook(book);
+    navigation.navigate('main', {screen: 'Play'});
   };
 
   return (
