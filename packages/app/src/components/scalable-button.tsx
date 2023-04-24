@@ -15,7 +15,10 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const timingConfig = {duration: 50, easing: Easing.linear};
 
 type Props = PropsWithChildren<{
-  onPress: () => void;
+  onPress?: () => void;
+  onLongPress?: () => void;
+  onPressIn?: () => void;
+  onPressOut?: () => void;
   scaleTo?: number;
   disabled?: boolean;
   bottomTabProps?: BottomTabBarButtonProps;
@@ -25,6 +28,9 @@ type Props = PropsWithChildren<{
 const ScalableButton: React.FC<Props> = ({
   children,
   onPress,
+  onLongPress,
+  onPressIn,
+  onPressOut,
   scaleTo = 0.85,
   disabled = false,
   bottomTabProps,
@@ -53,8 +59,15 @@ const ScalableButton: React.FC<Props> = ({
     <AnimatedPressable
       disabled={disabled}
       onPress={onPress}
-      onPressIn={() => (isPressed.value = true)}
-      onPressOut={() => (isPressed.value = false)}
+      onLongPress={onLongPress}
+      onPressIn={() => {
+        isPressed.value = true;
+        onPressIn?.();
+      }}
+      onPressOut={() => {
+        isPressed.value = false;
+        onPressOut?.();
+      }}
       style={[scaleAnimationStyle, style]}
       {...bottomTabProps}
     >
