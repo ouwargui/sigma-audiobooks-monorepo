@@ -14,6 +14,7 @@ import Animated, {
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import {usePlayer} from '../hooks/usePlayer';
 import {convertMsToTime} from '../utils/time-format';
+import {trpc} from '../utils/trpc';
 
 const VOLUME_SLIDER_SIZE = 240;
 const VOLUME_INTERVAL = 100;
@@ -23,7 +24,7 @@ type Intervals = {
   volumeDownInterval?: NodeJS.Timer;
 };
 
-const Play: React.FC<PlayNavProps> = () => {
+const Play: React.FC<PlayNavProps> = ({navigation}) => {
   const previousSliderOffsetX = useSharedValue(0);
   const isKnobActive = useSharedValue(false);
   const previousVolumeSliderOffsetX = useSharedValue(0);
@@ -35,6 +36,7 @@ const Play: React.FC<PlayNavProps> = () => {
     player.volume * VOLUME_SLIDER_SIZE,
   );
   const [intervals, setIntervals] = useState<Intervals>({});
+  const increaseListener = trpc.books.addListener.useMutation();
 
   const trackingDragGesture = useMemo(
     () =>
@@ -194,6 +196,7 @@ const Play: React.FC<PlayNavProps> = () => {
       await player.pause();
     } else {
       await player.play(player.currentChapter);
+      player.currentBook?.id && increaseListener.mutate(player.currentBook?.id);
     }
   };
 
@@ -223,7 +226,17 @@ const Play: React.FC<PlayNavProps> = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="w-44 self-center mt-4">
-        <BookCoverArt coverArtUrl={player.currentBook?.coverArtUrl ?? ''} />
+        <ScalableButton
+          scaleTo={0.95}
+          onPress={() => {
+            if (!player.currentBook) {
+              return;
+            }
+            navigation.navigate('Book', player.currentBook);
+          }}
+        >
+          <BookCoverArt coverArtUrl={player.currentBook?.coverArtUrl ?? ''} />
+        </ScalableButton>
         <View className="h-4" />
         <View className="flex-row justify-between items-center px-3">
           <ScalableButton onPress={() => console.log('bookmark')}>

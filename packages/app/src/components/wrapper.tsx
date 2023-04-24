@@ -49,7 +49,9 @@ const Wrapper: React.FC<Props> = ({children, title}) => {
       <Animated.ScrollView
         onScroll={onScroll}
         scrollEventThrottle={16}
-        contentContainerStyle={{paddingTop: insets.top * 2}}
+        contentContainerStyle={{
+          paddingTop: insets.top < 30 ? 80 : insets.top * 2,
+        }}
       >
         <View className="flex-1">{children}</View>
       </Animated.ScrollView>
@@ -57,7 +59,10 @@ const Wrapper: React.FC<Props> = ({children, title}) => {
         intensity={scrollYOffset}
         tint="light"
         className="top-0 left-0 right-0 absolute justify-end items-start"
-        style={[{height: insets.top * 2}, animatedBorder]}
+        style={[
+          {height: insets.top < 30 ? 80 : insets.top * 2},
+          animatedBorder,
+        ]}
       >
         <Text className="font-semi pl-3 text-5xl text-zinc-800">{title}</Text>
       </AnimatedBlurView>

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Share} from 'react-native';
 import {BookNavProps} from '../routes/types';
 import BookCoverArt from '../components/book-cover-art';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -50,6 +50,12 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   const handlePlayListen = () => {
     player.setCurrentBook(book);
     navigation.navigate('main', {screen: 'Play'});
+  };
+
+  const onShare = async () => {
+    await Share.share({
+      message: `Check out ${book.title} by ${book.author} on Sigma Audiobooks`,
+    });
   };
 
   return (
@@ -133,21 +139,26 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
         </View>
       </Animated.ScrollView>
       <AnimatedBlurView
-        className="absolute left-0 top-0 right-0 flex-row justify-between px-4 pb-4"
+        className="absolute left-0 top-0 right-0 flex-row justify-between items-center px-4 pb-4"
         tint="light"
         intensity={scrollYOffset}
-        style={[{paddingTop: insets.top}, animatedBorder]}
+        style={[
+          {paddingTop: insets.top <= 20 ? 24 : insets.top},
+          animatedBorder,
+        ]}
       >
         <ScalableButton onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color="#3f3f46" />
         </ScalableButton>
-        <Ionicons name="send-outline" size={24} color="#3f3f46" />
+        <ScalableButton onPress={() => void onShare()}>
+          <Ionicons name="send-outline" size={24} color="#3f3f46" />
+        </ScalableButton>
       </AnimatedBlurView>
       {scrollY.value < 50 && (
         <Animated.View
           entering={FadeInDown.duration(300)}
           exiting={FadeOutDown.duration(300)}
-          style={[{paddingBottom: insets.bottom}]}
+          style={[{paddingBottom: insets.bottom || 20}]}
           className="absolute bottom-0 left-0 right-0 flex-row justify-center items-center"
         >
           <ScalableButton style={{flex: 1}} onPress={handlePlayListen}>

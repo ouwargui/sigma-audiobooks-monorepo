@@ -9,23 +9,19 @@ export function setupBookRouter(
     getById: pProcedure.input(z.number()).query(({input, ctx}) => {
       return ctx.prisma.book.findUnique({
         where: {id: input},
-        include: {reviews: true},
       });
     }),
     getAll: pProcedure.query(({ctx}) => {
-      return ctx.prisma.book.findMany({include: {reviews: true}});
+      return ctx.prisma.book.findMany();
     }),
-    getRecommendations: pProcedure
-      .input(z.array(z.number()))
-      .query(({input, ctx}) => {
-        return ctx.prisma.book.findMany({
-          where: {
-            id: {
-              notIn: input,
-            },
-          },
-          include: {reviews: true},
-        });
-      }),
+    getRecommendations: pProcedure.query(({ctx}) => {
+      return ctx.prisma.book.findMany({take: 5});
+    }),
+    addListener: pProcedure.input(z.number()).mutation(({input, ctx}) => {
+      return ctx.prisma.book.update({
+        where: {id: input},
+        data: {totalListeners: {increment: 1}},
+      });
+    }),
   });
 }
