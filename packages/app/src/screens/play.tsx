@@ -143,7 +143,9 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
     const oldVolume = volumeSliderOffsetX.value / VOLUME_SLIDER_SIZE;
     const newVolume = oldVolume + 0.1 > 1 ? 1 : oldVolume + 0.1;
     void player.changeVolume(newVolume);
-    volumeSliderOffsetX.value = newVolume * VOLUME_SLIDER_SIZE;
+    volumeSliderOffsetX.value = withTiming(newVolume * VOLUME_SLIDER_SIZE, {
+      duration: 150,
+    });
   };
 
   const longPressVolumeUp = () => {
@@ -169,7 +171,9 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
     const oldVolume = volumeSliderOffsetX.value / VOLUME_SLIDER_SIZE;
     const newVolume = oldVolume - 0.1 < 0 ? 0 : oldVolume - 0.1;
     void player.changeVolume(newVolume);
-    volumeSliderOffsetX.value = newVolume * VOLUME_SLIDER_SIZE;
+    volumeSliderOffsetX.value = withTiming(newVolume * VOLUME_SLIDER_SIZE, {
+      duration: 150,
+    });
   };
 
   const longPressVolumeDown = () => {
