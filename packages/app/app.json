@@ -15,7 +15,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      },
+      "bundleIdentifier": "com.ouwargui.sigmaaudiobooks"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +31,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2672daef-44f6-4ef4-acff-c527df2c1e0b"
+      }
+    },
+    "owner": "ouwargui"
   }
 }
