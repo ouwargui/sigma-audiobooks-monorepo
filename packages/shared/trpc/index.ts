@@ -30,7 +30,7 @@ export const trpcExpressMiddleware = trpcExpress.createExpressMiddleware({
   router: appRouter,
   createContext,
   onError: (error) => {
-    console.error(error);
+    console.error(error.error);
   },
 });
 
