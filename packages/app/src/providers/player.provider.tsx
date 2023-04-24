@@ -43,6 +43,7 @@ const PlayerProvider: React.FC<PropsWithChildren> = ({children}) => {
   const [currentMillis, setCurrentMillis] = useState(0);
   const [currentRate, setCurrentRate] = useState(1);
   const [bookLoaded, setBookLoaded] = useState(false);
+  const [audioFinished, setAudioFinished] = useState(false);
 
   const setupAudio = useCallback(async () => {
     await Audio.setAudioModeAsync({
@@ -86,7 +87,13 @@ const PlayerProvider: React.FC<PropsWithChildren> = ({children}) => {
           }
           await newSound.setProgressUpdateIntervalAsync(1000);
           newSound.setOnPlaybackStatusUpdate((data) => {
-            data.isLoaded && setCurrentMillis(data.positionMillis);
+            if (data.isLoaded) {
+              setCurrentMillis(data.positionMillis);
+              if (data.didJustFinish) {
+                setAudioFinished(true);
+                setIsPlaying(false);
+              }
+            }
           });
           setIsPlaying(true);
           setBookLoaded(true);
@@ -187,6 +194,13 @@ const PlayerProvider: React.FC<PropsWithChildren> = ({children}) => {
     },
     [sound],
   );
+
+  useEffect(() => {
+    if (audioFinished) {
+      void skipToNext();
+      setAudioFinished(false);
+    }
+  }, [audioFinished, skipToNext]);
 
   useEffect(() => {
     return () => {

@@ -309,7 +309,7 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
           <Ionicons
             name="play-skip-back-outline"
             size={30}
-            color={player.currentChapter - 1 < 1 ? 'gray' : '#09090b'}
+            color={player.currentChapter - 1 < 1 ? 'lightgray' : '#09090b'}
           />
         </ScalableButton>
         <ScalableButton onPress={() => void togglePlayPause()}>
@@ -319,7 +319,7 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
             color={
               (player.currentBook?.totalChapters ?? 0) <
               player.currentChapter + 1
-                ? 'gray'
+                ? 'lightgray'
                 : '#09090b'
             }
           />

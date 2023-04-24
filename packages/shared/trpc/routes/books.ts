@@ -23,5 +23,10 @@ export function setupBookRouter(
         data: {totalListeners: {increment: 1}},
       });
     }),
+    getTrendingBook: pProcedure.query(({ctx}) => {
+      return ctx.prisma.book.findFirst({
+        orderBy: {totalListeners: 'desc'},
+      });
+    }),
   });
 }

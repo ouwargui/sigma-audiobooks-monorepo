@@ -9,6 +9,7 @@ import BookCoverArt from '../components/book-cover-art';
 
 const Home: React.FC<HomeNavProps> = ({navigation}) => {
   const discoverBooks = trpc.books.getRecommendations.useQuery();
+  const {data: trendingBook} = trpc.books.getTrendingBook.useQuery();
 
   if (!discoverBooks.data && discoverBooks.isLoading) {
     return null;
@@ -44,13 +45,16 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
         <ScalableButton
           style={{flex: 1}}
           scaleTo={0.95}
-          onPress={() => console.log('trending')}
+          onPress={() => {
+            if (!trendingBook) return;
+            navigation.navigate('Book', trendingBook);
+          }}
         >
           <View className="mx-4 p-4 flex-1 border-2 border-zinc-500 flex-row rounded-xl overflow-hidden">
             <View className="flex-1" style={{gap: 20}}>
               <View style={{gap: -5}}>
                 <Text className="font-semi text-lg text-zinc-800 leading-5">
-                  {discoverBooks.data?.at(0)?.title}
+                  {trendingBook?.title}
                 </Text>
                 <Text className="font-semi text-zinc-500">Now reading: 1K</Text>
               </View>
@@ -64,28 +68,40 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
         </ScalableButton>
       </View>
       <View className="h-4" />
-      <View className="mx-4" style={{gap: 5}}>
+      <View className="mx-4 flex-1" style={{gap: 5}}>
         <Text className="font-semi text-zinc-500">Continue listening</Text>
-        <View className="h-[1] bg-zinc-400"></View>
-        <View className="p-1 flex-row flex-1 justify-between items-center">
-          <Text className="font-semi text-base text-zinc-800">
-            The Great Gatsby
-          </Text>
-          <ScalableButton
-            scaleTo={0.95}
-            onPress={() => console.log('continue')}
-          >
-            <View className="rounded-full flex-row border-2 p-1 border-zinc-800 justify-between items-center">
-              <Ionicons
-                name="play-circle-outline"
-                size={28}
-                className="bg-zinc-800"
-              />
-              <Text className="font-semi text-base text-zinc-800">24:02</Text>
+        <View className="h-[1] bg-zinc-400" />
+        {discoverBooks.data?.map((book) => (
+          <>
+            <View
+              key={book.id}
+              className="p-1 flex-row flex-1 justify-between items-center"
+            >
+              <View className="flex-1">
+                <Text className="font-semi text-base text-zinc-800">
+                  {book.title}
+                </Text>
+              </View>
+              <ScalableButton
+                scaleTo={0.95}
+                onPress={() => console.log('continue')}
+              >
+                <View className="rounded-full flex-row border-2 p-1 border-zinc-800 justify-between items-center">
+                  <Ionicons
+                    name="play-circle-outline"
+                    size={28}
+                    className="bg-zinc-800"
+                  />
+                  <Text className="font-semi text-base text-zinc-800">
+                    {`${Math.ceil(Math.random() * 24)}`.padStart(2, '0')}:
+                    {`${Math.ceil(Math.random() * 59)}`.padStart(2, '0')}
+                  </Text>
+                </View>
+              </ScalableButton>
             </View>
-          </ScalableButton>
-        </View>
-        <View className="h-[1] bg-zinc-400"></View>
+            <View className="h-[1] bg-zinc-400" />
+          </>
+        ))}
       </View>
     </Wrapper>
   );

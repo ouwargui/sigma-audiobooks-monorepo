@@ -51,16 +51,16 @@ const App: React.FC = () => {
   }
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <PlayerProvider>
+    <PlayerProvider>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView style={{flex: 1}}>
             <Router />
             <StatusBar style="auto" />
           </GestureHandlerRootView>
-        </PlayerProvider>
-      </QueryClientProvider>
-    </trpc.Provider>
+        </QueryClientProvider>
+      </trpc.Provider>
+    </PlayerProvider>
   );
 };
 

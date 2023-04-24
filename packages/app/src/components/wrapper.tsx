@@ -1,5 +1,5 @@
-import {BlurView} from 'expo-blur';
 import React, {PropsWithChildren, useState} from 'react';
+import {BlurView} from 'expo-blur';
 import {View, Text} from 'react-native';
 import Animated, {
   interpolate,
@@ -47,6 +47,7 @@ const Wrapper: React.FC<Props> = ({children, title}) => {
   return (
     <View className="flex-1 bg-white">
       <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
         onScroll={onScroll}
         scrollEventThrottle={16}
         contentContainerStyle={{
