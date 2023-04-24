@@ -51,8 +51,18 @@ const Play: React.FC<PlayNavProps> = () => {
         })
         .onEnd(() => {
           isKnobActive.value = false;
+          runOnJS(player.changePosition)(
+            (sliderOffsetX.value / 100) * (player.durationMillis ?? 0),
+          );
         }),
-    [isKnobActive, previousSliderOffsetX, sliderOffsetX, width],
+    [
+      isKnobActive,
+      player.changePosition,
+      player.durationMillis,
+      previousSliderOffsetX,
+      sliderOffsetX,
+      width,
+    ],
   );
 
   const sliderAnimatedStyle = useAnimatedStyle(() => {
@@ -183,17 +193,32 @@ const Play: React.FC<PlayNavProps> = () => {
     if (player.isPlaying) {
       await player.pause();
     } else {
-      await player.play(1);
+      await player.play(player.currentChapter);
     }
   };
 
+  const toggleRate = async () => {
+    const rates = [1, 1.25, 1.5, 2];
+    const currentRateIndex = rates.findIndex(
+      (rate) => rate === player.currentRate,
+    );
+    const nextRate = rates[currentRateIndex + 1] ?? rates[0];
+    await player.changeRate(nextRate);
+  };
+
   useEffect(() => {
-    if (!player.currentMillis || !player.durationMillis) return;
+    if (!player.currentMillis || !player.durationMillis || isKnobActive.value)
+      return;
 
     const millisPercentage =
       (player.currentMillis * 100) / player.durationMillis;
     sliderOffsetX.value = withTiming(millisPercentage);
-  }, [player.currentMillis, player.durationMillis, sliderOffsetX]);
+  }, [
+    isKnobActive.value,
+    player.currentMillis,
+    player.durationMillis,
+    sliderOffsetX,
+  ]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -204,8 +229,10 @@ const Play: React.FC<PlayNavProps> = () => {
           <ScalableButton onPress={() => console.log('bookmark')}>
             <Ionicons name="bookmark-outline" size={24} color="#71717a" />
           </ScalableButton>
-          <ScalableButton onPress={() => console.log('time')}>
-            <Text className="font-regular text-xl text-zinc-500">1x</Text>
+          <ScalableButton onPress={() => void toggleRate()}>
+            <Text className="font-regular text-xl text-zinc-500">
+              {player.currentRate}x
+            </Text>
           </ScalableButton>
           <ScalableButton onPress={() => console.log('ellipsis')}>
             <Ionicons name="ellipsis-horizontal" size={24} color="#71717a" />
@@ -247,28 +274,45 @@ const Play: React.FC<PlayNavProps> = () => {
       </View>
       <View className="flex-row px-8 justify-between w-full">
         <Text className="font-regular text-sm text-zinc-500">
-          {convertMsToTime(player.currentMillis ?? 0)}
+          {convertMsToTime(player.currentMillis)}
         </Text>
         <Text className="font-regular text-sm text-zinc-500">
           Chapter {player.currentChapter}/{player.currentBook?.totalChapters}
         </Text>
         <Text className="font-regular text-sm text-zinc-500">
-          {convertMsToTime(player.durationMillis ?? 0)}
+          {convertMsToTime(player.durationMillis)}
         </Text>
       </View>
       <View className="h-10" />
       <View className="flex-row mx-8 items-center justify-between">
-        <ScalableButton>
-          <Ionicons name="play-skip-back-outline" size={30} color="#09090b" />
+        <ScalableButton
+          disabled={player.currentChapter - 1 < 1}
+          onPress={() => void player.skipToPrevious()}
+        >
+          <Ionicons
+            name="play-skip-back-outline"
+            size={30}
+            color={player.currentChapter - 1 < 1 ? 'gray' : '#09090b'}
+          />
         </ScalableButton>
         <ScalableButton onPress={() => void togglePlayPause()}>
           <Ionicons
             name={player.isPlaying ? 'pause' : 'play'}
             size={50}
-            color="#09090b"
+            color={
+              (player.currentBook?.totalChapters ?? 0) <
+              player.currentChapter + 1
+                ? 'gray'
+                : '#09090b'
+            }
           />
         </ScalableButton>
-        <ScalableButton>
+        <ScalableButton
+          disabled={
+            (player.currentBook?.totalChapters ?? 0) < player.currentChapter + 1
+          }
+          onPress={() => void player.skipToNext()}
+        >
           <Ionicons
             name="play-skip-forward-outline"
             size={30}

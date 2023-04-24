@@ -126,7 +126,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
           </View>
           <View className="h-4" />
           <View className="mx-4">
-            <Text className="font-medium text-base text-justify text-zinc-800">
+            <Text className="font-semi text-base text-justify text-zinc-600">
               {book.description}
             </Text>
           </View>
