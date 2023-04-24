@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "sigma-audiobooks",
+    "name": "Audiobooks",
     "slug": "sigma-audiobooks",
+    "scheme": "sigma-audiobooks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

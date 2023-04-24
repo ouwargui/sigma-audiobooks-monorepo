@@ -1,24 +1,39 @@
 {
   "cli": {
-    "version": ">= 3.8.1"
+    "version": ">= 3.8.1",
+    "appVersionSource": "remote",
+    "requireCommit": true
   },
   "build": {
-    "development": {
+    "dev:simulator": {
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "simulator": true
       }
     },
-    "preview": {
+    "dev:device": {
+      "developmentClient": true,
+      "autoIncrement": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "simulator": false
       }
     },
-    "production": {
+    "preview:simulator": {
+      "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "simulator": true
+      }
+    },
+    "preview:device": {
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium",
+        "simulator": false
       }
     }
   },
