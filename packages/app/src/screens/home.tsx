@@ -58,7 +58,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
               resizeMode="repeat"
               source={{uri: trendingBook?.coverArtUrl}}
             >
-              <BlurView className="w-full h-full" tint="dark" intensity={10} />
+              <BlurView className="w-full h-full" tint="dark" intensity={25} />
             </ImageBackground>
             <View className="flex-1" style={{gap: 20}}>
               <View style={{gap: -5}}>
