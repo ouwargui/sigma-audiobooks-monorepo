@@ -1,249 +1,178 @@
 import React, {
   PropsWithChildren,
-  createContext,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-import {Audio, InterruptionModeAndroid, InterruptionModeIOS} from 'expo-av';
+import TrackPlayer, {
+  Event,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+} from 'react-native-track-player';
 import {Book} from '../routes/types';
 
-export const PlayerContext = createContext<PlayerContextType>(
+type PlayerContextType = {
+  position: number;
+  duration: number;
+  loadBook: (book: Book) => Promise<void>;
+  togglePlay: () => Promise<void>;
+  seekTo: (time: number) => Promise<void>;
+  skipToNext: () => Promise<void>;
+  skipToPrevious: () => Promise<void>;
+  setRate: (rate: number) => Promise<void>;
+  currentRate: number;
+  isPlaying: boolean;
+  currentVolume: number;
+  setVolume: (volume: number) => Promise<void>;
+  currentChapter: number;
+  currentBook?: Book;
+};
+
+export const PlayerContext = React.createContext<PlayerContextType>(
   {} as PlayerContextType,
 );
 
-type PlayerContextType = {
-  currentBook: Book | undefined;
-  setCurrentBook: React.Dispatch<React.SetStateAction<Book | undefined>>;
-  currentChapter: number;
-  isPlaying: boolean;
-  setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
-  play: (index: number) => Promise<void>;
-  pause: () => Promise<void>;
-  resume: () => Promise<void>;
-  skipToNext: () => Promise<void>;
-  skipToPrevious: () => Promise<void>;
-  changeVolume: (value: number) => Promise<void>;
-  volume: number;
-  durationMillis: number;
-  currentMillis: number;
-  changePosition: (value: number) => Promise<void>;
-  changeRate: (value: number) => Promise<void>;
-  currentRate: number;
-};
+const events: Event[] = [Event.PlaybackError, Event.PlaybackTrackChanged];
 
 const PlayerProvider: React.FC<PropsWithChildren> = ({children}) => {
   const [currentBook, setCurrentBook] = useState<Book>();
-  const [currentChapter, setCurrentChapter] = useState(1);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [sound, setSound] = useState<Audio.Sound>();
-  const [volume, setVolume] = useState(1);
-  const [durationMillis, setDurationMillis] = useState(0);
-  const [currentMillis, setCurrentMillis] = useState(0);
   const [currentRate, setCurrentRate] = useState(1);
-  const [bookLoaded, setBookLoaded] = useState(false);
-  const [audioFinished, setAudioFinished] = useState(false);
+  const [currentVolume, setCurrentVolume] = useState(1);
+  const [currentChapter, setCurrentChapter] = useState(1);
+  const {position, duration} = useProgress();
+  const playbackState = usePlaybackState();
+  const isPlaying = playbackState === State.Playing;
 
-  const setupAudio = useCallback(async () => {
-    await Audio.setAudioModeAsync({
-      staysActiveInBackground: true,
-      allowsRecordingIOS: false,
-      interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-      playsInSilentModeIOS: true,
-      playThroughEarpieceAndroid: true,
-      interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-    });
+  const loadBook = useCallback(async (book: Book) => {
+    await TrackPlayer.reset();
+    setCurrentBook(book);
+    setCurrentChapter(1);
+    for (let i = 0; i < book.totalChapters; i++) {
+      await TrackPlayer.add({
+        id: `${book.id}-${i}`,
+        url: `${book.contentUrl}/${book.fileName}_${i + 1}.${
+          book.fileExtension
+        }`,
+        title: book.title,
+        artist: book.author,
+        artwork: book.coverArtUrl,
+        description: `Chapter ${i + 1}`,
+      });
+    }
   }, []);
 
-  const playSong = useCallback(
-    async (index: number) => {
-      await setupAudio();
-
-      if (!currentBook) {
-        return;
-      }
-
-      try {
-        if (sound) {
-          await sound.unloadAsync();
-          setIsPlaying(false);
-          setDurationMillis(0);
-          setCurrentMillis(0);
-          setBookLoaded(false);
-        }
-
-        const newSoundUri = `${currentBook.contentUrl}/${currentBook.fileName}_${index}.${currentBook.fileExtension}`;
-        console.log(newSoundUri);
-        const {sound: newSound, status} = await Audio.Sound.createAsync(
-          {uri: newSoundUri},
-          {shouldPlay: true},
-        );
-        await newSound.setVolumeAsync(volume);
-        await newSound.setRateAsync(currentRate, true);
-        if (status.isLoaded) {
-          if (status.durationMillis) {
-            setDurationMillis(status.durationMillis);
-          }
-          await newSound.setProgressUpdateIntervalAsync(1000);
-          newSound.setOnPlaybackStatusUpdate((data) => {
-            if (data.isLoaded) {
-              setCurrentMillis(data.positionMillis);
-              if (data.didJustFinish) {
-                setAudioFinished(true);
-                setIsPlaying(false);
-              }
-            }
-          });
-          setIsPlaying(true);
-          setBookLoaded(true);
-        } else {
-          status.error && console.log(status.error);
-        }
-
-        setSound(newSound);
-        setCurrentChapter(index);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [setupAudio, currentBook, sound, volume, currentRate],
-  );
-
-  const resume = useCallback(async () => {
-    if (!sound) {
+  const togglePlay = useCallback(async () => {
+    if (!currentBook) {
       return;
     }
-    await sound.playAsync();
-    setIsPlaying(true);
-  }, [sound]);
 
-  const play = useCallback(
-    async (index: number) => {
-      if (index === currentChapter && isPlaying) {
-        return;
-      }
-      if (index === currentChapter && bookLoaded) {
-        await resume();
-        return;
-      }
-      await playSong(index);
-    },
-    [bookLoaded, currentChapter, isPlaying, playSong, resume],
-  );
+    playbackState !== State.Playing
+      ? await TrackPlayer.play()
+      : await TrackPlayer.pause();
+  }, [playbackState, currentBook]);
 
-  const pause = useCallback(async () => {
-    if (!sound) {
-      return;
-    }
-    await sound.pauseAsync();
-    setIsPlaying(false);
-  }, [sound]);
+  const seekTo = useCallback(async (time: number) => {
+    await TrackPlayer.seekTo(time);
+  }, []);
 
   const skipToNext = useCallback(async () => {
-    if (!currentBook) {
+    const currentTrackIndex = await TrackPlayer.getCurrentTrack();
+    if (!currentTrackIndex || !currentBook) {
       return;
     }
-    console.log(currentChapter, currentBook.totalChapters);
-    if (currentChapter < currentBook.totalChapters) {
-      await play(currentChapter + 1);
+
+    if (currentTrackIndex + 1 < currentBook.totalChapters) {
+      await TrackPlayer.skipToNext();
     } else {
-      await play(1);
+      await TrackPlayer.seekTo(duration);
     }
-  }, [currentChapter, play, currentBook]);
+  }, [currentBook, duration]);
 
   const skipToPrevious = useCallback(async () => {
-    if (!currentBook) {
+    const currentTrackIndex = await TrackPlayer.getCurrentTrack();
+    if (!currentTrackIndex) {
       return;
     }
-    if (currentChapter > 0) {
-      await play(currentChapter - 1);
-    } else {
-      await play(currentBook.totalChapters - 1);
+
+    if (position > 3) {
+      await TrackPlayer.seekTo(0);
+      return;
     }
-  }, [currentChapter, play, currentBook]);
 
-  const changeVolume = useCallback(
-    async (value: number) => {
-      setVolume(value);
-      if (!sound) {
-        return;
-      }
-      await sound.setVolumeAsync(value);
-    },
-    [sound],
-  );
-
-  const changePosition = useCallback(
-    async (timestamp: number) => {
-      if (!sound) {
-        return;
-      }
-      await sound.setPositionAsync(timestamp);
-    },
-    [sound],
-  );
-
-  const changeRate = useCallback(
-    async (rate: number) => {
-      setCurrentRate(rate);
-      if (!sound) {
-        return;
-      }
-      await sound.setRateAsync(rate, true);
-    },
-    [sound],
-  );
-
-  useEffect(() => {
-    if (audioFinished) {
-      void skipToNext();
-      setAudioFinished(false);
+    if (currentTrackIndex - 1 >= 0) {
+      await TrackPlayer.skipToPrevious();
+      return;
     }
-  }, [audioFinished, skipToNext]);
+
+    await TrackPlayer.seekTo(0);
+  }, [position]);
+
+  const setRate = useCallback(async (rate: number) => {
+    await TrackPlayer.setRate(rate);
+    setCurrentRate(rate);
+  }, []);
+
+  const setVolume = useCallback(async (volume: number) => {
+    await TrackPlayer.setVolume(volume);
+    setCurrentVolume(volume);
+  }, []);
+
+  useTrackPlayerEvents(events, (e) => {
+    if (e.type === Event.PlaybackError) {
+      console.error(e.message);
+      void TrackPlayer.reset();
+      return;
+    }
+
+    if (e.type === Event.PlaybackTrackChanged) {
+      setCurrentChapter(e.nextTrack + 1);
+    }
+  });
 
   useEffect(() => {
     return () => {
-      void sound?.unloadAsync();
+      console.log('limpei');
+      void TrackPlayer.reset();
+      setCurrentBook(undefined);
+      setCurrentChapter(1);
     };
-  }, [sound]);
+  }, []);
 
   const returnValues = useMemo(
     () => ({
-      currentBook,
-      setCurrentBook,
-      currentChapter,
-      setIsPlaying,
-      play,
-      pause,
-      resume,
+      position,
+      duration,
+      loadBook,
+      togglePlay,
+      seekTo,
       skipToNext,
       skipToPrevious,
-      isPlaying,
-      changeVolume,
-      volume,
-      durationMillis,
-      currentMillis,
-      changePosition,
-      changeRate,
+      setRate,
       currentRate,
+      isPlaying,
+      currentVolume,
+      setVolume,
+      currentChapter,
+      currentBook,
     }),
     [
-      currentChapter,
-      pause,
-      play,
-      currentBook,
-      resume,
+      position,
+      duration,
+      loadBook,
+      togglePlay,
+      seekTo,
       skipToNext,
       skipToPrevious,
-      isPlaying,
-      changeVolume,
-      volume,
-      durationMillis,
-      currentMillis,
-      changePosition,
-      changeRate,
+      setRate,
       currentRate,
+      isPlaying,
+      currentVolume,
+      setVolume,
+      currentChapter,
+      currentBook,
     ],
   );
 

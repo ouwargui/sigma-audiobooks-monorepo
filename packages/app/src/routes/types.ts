@@ -14,7 +14,7 @@ export type TabParamList = {
   Search: undefined;
   Library: undefined;
   Profile: undefined;
-  Play: undefined;
+  Play: {shouldPlay?: boolean};
 };
 
 export type RootParamList = {

@@ -17,6 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import ScalableButton from '../components/scalable-button';
 import {usePlayer} from '../hooks/usePlayer';
+import {trpc} from '../utils/trpc';
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -26,6 +27,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   const insets = useSafeAreaInsets();
   const [scrollYOffset, setScrollYOfsset] = useState(0);
   const scrollY = useSharedValue(0);
+  const mutation = trpc.books.addListener.useMutation();
 
   const onScroll = useAnimatedScrollHandler({
     onScroll(event) {
@@ -47,9 +49,10 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
     };
   });
 
-  const handlePlayListen = () => {
-    player.setCurrentBook(book);
-    navigation.navigate('main', {screen: 'Play'});
+  const handlePlayListen = async () => {
+    await player.loadBook(book);
+    mutation.mutate(book.id);
+    navigation.navigate('main', {screen: 'Play', params: {shouldPlay: false}});
   };
 
   const onShare = async () => {
@@ -161,7 +164,10 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
           style={[{paddingBottom: insets.bottom || 20}]}
           className="absolute bottom-0 left-0 right-0 flex-row justify-center items-center"
         >
-          <ScalableButton style={{flex: 1}} onPress={handlePlayListen}>
+          <ScalableButton
+            style={{flex: 1}}
+            onPress={() => void handlePlayListen()}
+          >
             <View className="flex-1 py-4 mx-10 justify-center items-center rounded-full bg-zinc-950">
               <Text className="text-zinc-50 font-bold text-lg">Listen</Text>
             </View>

@@ -28,7 +28,6 @@ const TabRoutes: React.FC = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: {borderTopWidth: 0},
       }}
     >
       <Tab.Screen

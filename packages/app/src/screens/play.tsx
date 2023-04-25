@@ -12,9 +12,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import {usePlayer} from '../hooks/usePlayer';
 import {convertMsToTime} from '../utils/time-format';
-import {trpc} from '../utils/trpc';
+import {usePlayer} from '../hooks/usePlayer';
 
 const VOLUME_SLIDER_SIZE = 240;
 const VOLUME_INTERVAL = 100;
@@ -24,19 +23,19 @@ type Intervals = {
   volumeDownInterval?: NodeJS.Timer;
 };
 
-const Play: React.FC<PlayNavProps> = ({navigation}) => {
+const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
+  const params = route.params;
   const previousSliderOffsetX = useSharedValue(0);
   const isKnobActive = useSharedValue(false);
   const previousVolumeSliderOffsetX = useSharedValue(0);
-  const player = usePlayer();
   const isVolumeKnobActive = useSharedValue(false);
   const {width} = useWindowDimensions();
+  const player = usePlayer();
   const sliderOffsetX = useSharedValue(0);
   const volumeSliderOffsetX = useSharedValue(
-    player.volume * VOLUME_SLIDER_SIZE,
+    player.currentVolume * VOLUME_SLIDER_SIZE,
   );
   const [intervals, setIntervals] = useState<Intervals>({});
-  const increaseListener = trpc.books.addListener.useMutation();
 
   const trackingDragGesture = useMemo(
     () =>
@@ -53,14 +52,12 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
         })
         .onEnd(() => {
           isKnobActive.value = false;
-          runOnJS(player.changePosition)(
-            (sliderOffsetX.value / 100) * (player.durationMillis ?? 0),
-          );
+          runOnJS(player.seekTo)((sliderOffsetX.value / 100) * player.duration);
         }),
     [
       isKnobActive,
-      player.changePosition,
-      player.durationMillis,
+      player.seekTo,
+      player.duration,
       previousSliderOffsetX,
       sliderOffsetX,
       width,
@@ -103,7 +100,7 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
             [0, VOLUME_SLIDER_SIZE],
             'clamp',
           );
-          runOnJS(player.changeVolume)(
+          runOnJS(player.setVolume)(
             volumeSliderOffsetX.value / VOLUME_SLIDER_SIZE,
           );
         })
@@ -142,7 +139,7 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
   const onPressVolumeUp = () => {
     const oldVolume = volumeSliderOffsetX.value / VOLUME_SLIDER_SIZE;
     const newVolume = oldVolume + 0.1 > 1 ? 1 : oldVolume + 0.1;
-    void player.changeVolume(newVolume);
+    void player.setVolume(newVolume);
     volumeSliderOffsetX.value = withTiming(newVolume * VOLUME_SLIDER_SIZE, {
       duration: 150,
     });
@@ -170,7 +167,7 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
   const onPressVolumeDown = () => {
     const oldVolume = volumeSliderOffsetX.value / VOLUME_SLIDER_SIZE;
     const newVolume = oldVolume - 0.1 < 0 ? 0 : oldVolume - 0.1;
-    void player.changeVolume(newVolume);
+    void player.setVolume(newVolume);
     volumeSliderOffsetX.value = withTiming(newVolume * VOLUME_SLIDER_SIZE, {
       duration: 150,
     });
@@ -196,12 +193,15 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
   };
 
   const togglePlayPause = async () => {
-    if (player.isPlaying) {
-      await player.pause();
-    } else {
-      await player.play(player.currentChapter);
-      player.currentBook?.id && increaseListener.mutate(player.currentBook?.id);
-    }
+    await player.togglePlay();
+  };
+
+  const onPressSkipNext = async () => {
+    await player.skipToNext();
+  };
+
+  const onPressSkipBack = async () => {
+    await player.skipToPrevious();
   };
 
   const toggleRate = async () => {
@@ -210,22 +210,21 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
       (rate) => rate === player.currentRate,
     );
     const nextRate = rates[currentRateIndex + 1] ?? rates[0];
-    await player.changeRate(nextRate);
+    await player.setRate(nextRate);
   };
 
   useEffect(() => {
-    if (!player.currentMillis || !player.durationMillis || isKnobActive.value)
-      return;
-
-    const millisPercentage =
-      (player.currentMillis * 100) / player.durationMillis;
+    const durationMillis = player.duration * 1000;
+    const currentMillis = player.position * 1000;
+    const millisPercentage = (currentMillis * 100) / durationMillis;
     sliderOffsetX.value = withTiming(millisPercentage);
-  }, [
-    isKnobActive.value,
-    player.currentMillis,
-    player.durationMillis,
-    sliderOffsetX,
-  ]);
+  }, [player.duration, player.position, sliderOffsetX]);
+
+  useEffect(() => {
+    if (params?.shouldPlay) {
+      void player.togglePlay();
+    }
+  }, [params, player]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -291,25 +290,29 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
       </View>
       <View className="flex-row px-8 justify-between w-full">
         <Text className="font-regular text-sm text-zinc-500">
-          {convertMsToTime(player.currentMillis)}
+          {convertMsToTime(player.position * 1000)}
         </Text>
         <Text className="font-regular text-sm text-zinc-500">
           Chapter {player.currentChapter}/{player.currentBook?.totalChapters}
         </Text>
         <Text className="font-regular text-sm text-zinc-500">
-          {convertMsToTime(player.durationMillis)}
+          {convertMsToTime(player.duration * 1000)}
         </Text>
       </View>
       <View className="h-10" />
       <View className="flex-row mx-8 items-center justify-between">
         <ScalableButton
-          disabled={player.currentChapter - 1 < 1}
-          onPress={() => void player.skipToPrevious()}
+          disabled={player.currentChapter - 1 < 1 && player.position <= 3}
+          onPress={() => void onPressSkipBack()}
         >
           <Ionicons
             name="play-skip-back-outline"
             size={30}
-            color={player.currentChapter - 1 < 1 ? 'lightgray' : '#09090b'}
+            color={
+              player.currentChapter - 1 < 1 && player.position <= 3
+                ? 'lightgray'
+                : '#09090b'
+            }
           />
         </ScalableButton>
         <ScalableButton onPress={() => void togglePlayPause()}>
@@ -328,12 +331,17 @@ const Play: React.FC<PlayNavProps> = ({navigation}) => {
           disabled={
             (player.currentBook?.totalChapters ?? 0) < player.currentChapter + 1
           }
-          onPress={() => void player.skipToNext()}
+          onPress={() => void onPressSkipNext()}
         >
           <Ionicons
             name="play-skip-forward-outline"
             size={30}
-            color="#09090b"
+            color={
+              (player.currentBook?.totalChapters ?? 0) <
+              player.currentChapter + 1
+                ? 'lightgray'
+                : '#09090b'
+            }
           />
         </ScalableButton>
       </View>

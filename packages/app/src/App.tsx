@@ -18,7 +18,9 @@ import {
 } from '@expo-google-fonts/red-hat-mono';
 import Router from './routes';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {setupPlayer} from './services/PlaybackService';
 import PlayerProvider from './providers/player.provider';
+// import PlayerProvider from './providers/player.provider';
 
 const trpcClient = trpc.createClient({
   links: [
@@ -28,6 +30,8 @@ const trpcClient = trpc.createClient({
   ],
 });
 const queryClient = new QueryClient();
+
+void setupPlayer();
 
 const App: React.FC = () => {
   const [fontsLoaded, error] = useFonts({

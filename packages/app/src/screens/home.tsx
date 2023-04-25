@@ -72,11 +72,8 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
         <Text className="font-semi text-zinc-500">Continue listening</Text>
         <View className="h-[1] bg-zinc-400" />
         {discoverBooks.data?.map((book) => (
-          <>
-            <View
-              key={book.id}
-              className="p-1 flex-row flex-1 justify-between items-center"
-            >
+          <React.Fragment key={book.id}>
+            <View className="p-1 flex-row flex-1 justify-between items-center">
               <View className="flex-1">
                 <Text className="font-semi text-base text-zinc-800">
                   {book.title}
@@ -100,7 +97,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
               </ScalableButton>
             </View>
             <View className="h-[1] bg-zinc-400" />
-          </>
+          </React.Fragment>
         ))}
       </View>
     </Wrapper>
