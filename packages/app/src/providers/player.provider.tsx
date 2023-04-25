@@ -80,7 +80,7 @@ const PlayerProvider: React.FC<PropsWithChildren> = ({children}) => {
 
   const skipToNext = useCallback(async () => {
     const currentTrackIndex = await TrackPlayer.getCurrentTrack();
-    if (!currentTrackIndex || !currentBook) {
+    if ((!currentTrackIndex && currentTrackIndex !== 0) || !currentBook) {
       return;
     }
 
@@ -93,7 +93,7 @@ const PlayerProvider: React.FC<PropsWithChildren> = ({children}) => {
 
   const skipToPrevious = useCallback(async () => {
     const currentTrackIndex = await TrackPlayer.getCurrentTrack();
-    if (!currentTrackIndex) {
+    if (!currentTrackIndex && currentTrackIndex !== 0) {
       return;
     }
 

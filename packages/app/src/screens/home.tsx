@@ -1,13 +1,15 @@
 import React from 'react';
-import {FlatList, Text, View} from 'react-native';
+import {FlatList, ImageBackground, Text, View} from 'react-native';
 import Wrapper from '../components/wrapper';
 import ScalableButton from '../components/scalable-button';
 import {Ionicons} from '@expo/vector-icons';
 import {trpc} from '../utils/trpc';
 import {HomeNavProps} from '../routes/types';
 import BookCoverArt from '../components/book-cover-art';
+import {BlurView} from 'expo-blur';
 
 const Home: React.FC<HomeNavProps> = ({navigation}) => {
+  const {data: books} = trpc.books.getAll.useQuery();
   const discoverBooks = trpc.books.getRecommendations.useQuery();
   const {data: trendingBook} = trpc.books.getTrendingBook.useQuery();
 
@@ -23,7 +25,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
           contentContainerStyle={{paddingHorizontal: 16}}
           horizontal
           showsHorizontalScrollIndicator={false}
-          data={discoverBooks.data}
+          data={books}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <View className="w-3" />}
           renderItem={({item}) => (
@@ -50,20 +52,26 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
             navigation.navigate('Book', trendingBook);
           }}
         >
-          <View className="mx-4 p-4 flex-1 border-2 border-zinc-500 flex-row rounded-xl overflow-hidden">
+          <View className="mx-4 p-4 flex-1 flex-row rounded-xl overflow-hidden">
+            <ImageBackground
+              className="absolute top-0 left-0 right-0 bottom-0"
+              resizeMode="repeat"
+              source={{uri: trendingBook?.coverArtUrl}}
+            >
+              <BlurView className="w-full h-full" tint="dark" intensity={10} />
+            </ImageBackground>
             <View className="flex-1" style={{gap: 20}}>
               <View style={{gap: -5}}>
-                <Text className="font-semi text-lg text-zinc-800 leading-5">
+                <Text className="font-semi text-lg text-zinc-50 leading-5">
                   {trendingBook?.title}
                 </Text>
-                <Text className="font-semi text-zinc-500">Now reading: 1K</Text>
+                <Text className="font-semi text-zinc-300">Now reading: 1K</Text>
               </View>
               <View style={{gap: -5}}>
-                <Text className="font-semi text-zinc-500">44K</Text>
-                <Text className="font-semi text-zinc-500">Reviews</Text>
+                <Text className="font-semi text-zinc-300">44K</Text>
+                <Text className="font-semi text-zinc-300">Reviews</Text>
               </View>
             </View>
-            <View className="flex-1 bg-red-200" />
           </View>
         </ScalableButton>
       </View>

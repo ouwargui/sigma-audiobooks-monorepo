@@ -20,12 +20,11 @@ import Router from './routes';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {setupPlayer} from './services/PlaybackService';
 import PlayerProvider from './providers/player.provider';
-// import PlayerProvider from './providers/player.provider';
 
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: 'http://192.168.15.119:3000/api/trpc',
+      url: 'https://sigma-audiobooks.up.railway.app/api/trpc',
     }),
   ],
 });
