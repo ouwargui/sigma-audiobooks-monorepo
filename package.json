@@ -6,7 +6,11 @@
   "private": "true",
   "scripts": {
     "dev:app": "yarn workspace @sigma-audiobooks/app start",
-    "dev:server": "yarn workspace @sigma-audiobooks/server start"
+    "dev:server": "yarn workspace @sigma-audiobooks/server start",
+    "build:app:dev:device": "cd packages/app && eas build --platform ios --profile dev:device",
+    "build:app:preview:device": "cd packages/app && eas build --platform ios --profile preview:device",
+    "build:app:dev:simulator": "cd packages/app && eas build --platform ios --profile dev:simulator",
+    "build:app:preview:simulator": "cd packages/app && eas build --platform ios --profile preview:simulator"
   },
   "workspaces": [
     "packages/*"
