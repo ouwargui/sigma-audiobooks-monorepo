@@ -40,3 +40,4 @@ export type LibraryNavProps = TabScreenProps<'Library'>;
 export type ProfileNavProps = TabScreenProps<'Profile'>;
 export type PlayNavProps = TabScreenProps<'Play'>;
 export type BookNavProps = StackScreenProps<'Book'>;
+export type MainNavProps = StackScreenProps<'main'>;

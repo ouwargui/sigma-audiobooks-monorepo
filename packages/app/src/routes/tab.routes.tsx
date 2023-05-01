@@ -8,15 +8,13 @@ import Play from '../screens/play';
 import Library from '../screens/library';
 import Profile from '../screens/profile';
 import ScalableButton from '../components/scalable-button';
-import {useNavigation} from '@react-navigation/native';
-import {ScreenNames, TabParamList} from './types';
+import {MainNavProps, ScreenNames, TabParamList} from './types';
 import {usePlayer} from '../hooks/usePlayer';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const TabRoutes: React.FC = () => {
+const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
   const {currentBook} = usePlayer();
-  const navigation = useNavigation();
   const navigateTo = (screenName: ScreenNames) => {
     navigation.navigate(screenName as never);
   };
@@ -44,7 +42,7 @@ const TabRoutes: React.FC = () => {
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
               size={28}
-              color={focused ? 'black' : 'gray'}
+              color={focused ? '#18181b' : '#71717a'}
             />
           ),
         }}
@@ -60,7 +58,7 @@ const TabRoutes: React.FC = () => {
             <Ionicons
               name="search"
               size={28}
-              color={focused ? 'black' : 'gray'}
+              color={focused ? '#18181b' : '#71717a'}
             />
           ),
         }}
@@ -80,7 +78,7 @@ const TabRoutes: React.FC = () => {
             <Ionicons
               name={focused ? 'play-circle' : 'play-circle-outline'}
               size={28}
-              color={playDisabled ? 'lightgray' : focused ? 'black' : 'gray'}
+              color={playDisabled ? '#d4d4d8' : focused ? '#18181b' : '#71717a'}
             />
           ),
         }}
@@ -96,7 +94,7 @@ const TabRoutes: React.FC = () => {
             <Ionicons
               name={focused ? 'library' : 'library-outline'}
               size={28}
-              color={focused ? 'black' : 'gray'}
+              color={focused ? '#18181b' : '#71717a'}
             />
           ),
         }}
@@ -112,7 +110,7 @@ const TabRoutes: React.FC = () => {
             <Ionicons
               name={focused ? 'person' : 'person-outline'}
               size={28}
-              color={focused ? 'black' : 'gray'}
+              color={focused ? '#18181b' : '#71717a'}
             />
           ),
         }}

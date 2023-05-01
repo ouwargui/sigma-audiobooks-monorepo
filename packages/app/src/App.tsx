@@ -24,7 +24,7 @@ import PlayerProvider from './providers/player.provider';
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: 'https://sigma-audiobooks.up.railway.app/api/trpc',
+      url: 'https://audiobooks.guisantos.dev/api/trpc',
     }),
   ],
 });
