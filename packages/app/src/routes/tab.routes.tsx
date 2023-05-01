@@ -28,6 +28,9 @@ const TabRoutes: React.FC = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarStyle: {
+          borderColor: '#a1a1aa',
+        },
       }}
     >
       <Tab.Screen

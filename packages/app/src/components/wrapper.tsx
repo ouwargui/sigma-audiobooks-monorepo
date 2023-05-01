@@ -38,9 +38,9 @@ const Wrapper: React.FC<Props> = ({children, title}) => {
       borderBottomColor: interpolateColor(
         scrollYOffset,
         [0, 50],
-        ['#fff', '#E4E4E7'],
+        ['#fff', '#a1a1aa'],
       ),
-      borderBottomWidth: 1,
+      borderBottomWidth: 0.5,
     };
   });
 
