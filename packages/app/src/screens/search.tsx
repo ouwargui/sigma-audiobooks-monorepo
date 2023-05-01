@@ -1,11 +1,12 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {Text} from 'react-native';
+import Wrapper from '../components/wrapper';
 
 const Search: React.FC = () => {
   return (
-    <View>
+    <Wrapper title="Search">
       <Text>Search</Text>
-    </View>
+    </Wrapper>
   );
 };
 
