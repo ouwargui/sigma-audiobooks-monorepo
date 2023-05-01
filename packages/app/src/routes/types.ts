@@ -22,6 +22,8 @@ export type RootParamList = {
   Book: Book;
 };
 
+export type ScreenNames = keyof TabParamList | keyof RootParamList;
+
 type TabScreenProps<T extends keyof TabParamList> = CompositeScreenProps<
   BottomTabScreenProps<TabParamList, T>,
   NativeStackScreenProps<RootParamList>

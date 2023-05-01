@@ -9,7 +9,7 @@ import Library from '../screens/library';
 import Profile from '../screens/profile';
 import ScalableButton from '../components/scalable-button';
 import {useNavigation} from '@react-navigation/native';
-import {TabParamList} from './types';
+import {ScreenNames, TabParamList} from './types';
 import {usePlayer} from '../hooks/usePlayer';
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -17,7 +17,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
 const TabRoutes: React.FC = () => {
   const {currentBook} = usePlayer();
   const navigation = useNavigation();
-  const navigateTo = (screenName: string) => {
+  const navigateTo = (screenName: ScreenNames) => {
     navigation.navigate(screenName as never);
   };
 
