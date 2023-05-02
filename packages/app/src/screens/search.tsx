@@ -9,10 +9,14 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import {trpc} from '../utils/trpc';
+import SearchResults from '../components/search-results';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
 const Search: React.FC = () => {
+  const books = trpc.books.getAll.useQuery();
+
   const [inputValue, setInputValue] = useState('');
   const isInputFocused = useSharedValue(false);
 
@@ -41,34 +45,47 @@ const Search: React.FC = () => {
     };
   });
 
+  if (!books.data) return null;
+
   return (
-    <Wrapper title="Search">
-      <Animated.View
-        style={animatedBorderStyle}
-        className="mx-4 rounded-xl border-2 justify-start items-center p-4 flex-row"
-      >
-        <AnimatedIcon
-          name="search"
-          size={24}
-          animatedProps={animatedIconColor}
-        />
-        <TextInput
-          className="flex-1 text-zinc-600 font-semi text-base leading-none"
-          autoCapitalize="none"
-          hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
-          placeholderTextColor="#d4d8d4"
-          placeholder="What do you want to listen?"
-          value={inputValue}
-          onChangeText={setInputValue}
-          onFocus={() => (isInputFocused.value = true)}
-          onBlur={() => {
-            if (inputValue) return;
-            isInputFocused.value = false;
-          }}
-        />
-      </Animated.View>
-      <View className="h-4" />
-    </Wrapper>
+    <Wrapper<(typeof books.data)[number]>
+      title="Search"
+      flatList
+      data={books.data}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({item}) => <SearchResults book={item} />}
+      renderHeader={
+        <>
+          <Animated.View
+            style={animatedBorderStyle}
+            className="mx-4 rounded-xl border-2 justify-start items-center p-4 flex-row"
+          >
+            <AnimatedIcon
+              name="search"
+              size={24}
+              animatedProps={animatedIconColor}
+            />
+            <TextInput
+              className="flex-1 text-zinc-600 font-semi text-base leading-none"
+              autoCapitalize="none"
+              hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
+              placeholderTextColor="#d4d8d4"
+              placeholder="What do you want to listen?"
+              value={inputValue}
+              onChangeText={setInputValue}
+              onFocus={() => (isInputFocused.value = true)}
+              onBlur={() => {
+                if (inputValue) return;
+                isInputFocused.value = false;
+              }}
+            />
+          </Animated.View>
+          <View className="h-2" />
+        </>
+      }
+      renderSpacer={() => <View className="h-2" />}
+      renderFooter={<View className="h-4" />}
+    />
   );
 };
 

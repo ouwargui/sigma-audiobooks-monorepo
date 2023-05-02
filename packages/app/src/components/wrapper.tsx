@@ -1,6 +1,6 @@
 import React, {PropsWithChildren, useState} from 'react';
 import {BlurView} from 'expo-blur';
-import {View, Text} from 'react-native';
+import {View, Text, ListRenderItem} from 'react-native';
 import Animated, {
   interpolate,
   interpolateColor,
@@ -10,13 +10,27 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-type Props = PropsWithChildren<{
-  title: string;
-}>;
+type ScrollViewProps = {
+  flatList?: false;
+};
+
+type FlatListProps<T> = {
+  flatList: true;
+  data: T[];
+  keyExtractor: (item: T) => string;
+  renderItem: ListRenderItem<T>;
+  renderHeader?: React.ReactElement;
+  renderSpacer?: React.ComponentType;
+  renderFooter?: React.ReactElement;
+};
+
+type Props<T> = PropsWithChildren<
+  {title: string} & (ScrollViewProps | FlatListProps<T>)
+>;
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
-const Wrapper: React.FC<Props> = ({children, title}) => {
+const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
   const insets = useSafeAreaInsets();
   const [scrollYOffset, setScrollYOffset] = useState(0);
 
@@ -46,16 +60,33 @@ const Wrapper: React.FC<Props> = ({children, title}) => {
 
   return (
     <View className="flex-1 bg-white">
-      <Animated.ScrollView
-        showsVerticalScrollIndicator={false}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        contentContainerStyle={{
-          paddingTop: insets.top < 30 ? 80 : insets.top * 2,
-        }}
-      >
-        <View className="flex-1">{children}</View>
-      </Animated.ScrollView>
+      {props.flatList ? (
+        <Animated.FlatList
+          showsVerticalScrollIndicator={false}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          contentContainerStyle={{
+            paddingTop: insets.top < 30 ? 80 : insets.top * 2,
+          }}
+          data={props.data}
+          renderItem={props.renderItem}
+          keyExtractor={props.keyExtractor}
+          ListHeaderComponent={props.renderHeader}
+          ItemSeparatorComponent={props.renderSpacer}
+          ListFooterComponent={props.renderFooter}
+        />
+      ) : (
+        <Animated.ScrollView
+          showsVerticalScrollIndicator={false}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          contentContainerStyle={{
+            paddingTop: insets.top < 30 ? 80 : insets.top * 2,
+          }}
+        >
+          <View className="flex-1">{children}</View>
+        </Animated.ScrollView>
+      )}
       <AnimatedBlurView
         intensity={scrollYOffset}
         tint="light"
