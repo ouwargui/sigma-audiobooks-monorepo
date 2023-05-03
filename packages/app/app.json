@@ -22,7 +22,10 @@
           "audio"
         ]
       },
-      "bundleIdentifier": "com.ouwargui.sigmaaudiobooks"
+      "bundleIdentifier": "com.ouwargui.sigmaaudiobooks",
+      "associatedDomains": [
+        "applinks:audiobooks.guisantos.dev"
+      ]
     },
     "android": {
       "adaptiveIcon": {

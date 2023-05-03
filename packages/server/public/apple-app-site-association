@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "JF8DW7C5A2.com.ouwargui.sigmaaudiobooks",
+        "paths": ["/app/*"]
+      }
+    ]
+  }
+}
