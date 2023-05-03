@@ -23,6 +23,7 @@ type FlatListProps<T> = {
   renderSpacer?: React.ComponentType;
   renderFooter?: React.ReactElement;
   renderEmpty?: React.ReactElement;
+  onEndReached?: () => void;
 };
 
 type Props<T> = PropsWithChildren<
@@ -76,6 +77,7 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
           ItemSeparatorComponent={props.renderSpacer}
           ListFooterComponent={props.renderFooter}
           ListEmptyComponent={props.renderEmpty}
+          onEndReached={props.onEndReached}
         />
       ) : (
         <Animated.ScrollView

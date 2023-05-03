@@ -70,6 +70,15 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
   children,
 }) => {
   const books = trpc.books.getByQuery.useQuery(query, {enabled: !!query});
+  const recentlyAddedBooksPaginator =
+    trpc.books.getRecentlyAdded.useInfiniteQuery(
+      {limit: 5},
+      {getNextPageParam: (lastPage) => lastPage.nextCursor, enabled: !query},
+    );
+
+  const recentlyAddedBooks = recentlyAddedBooksPaginator.data?.pages.map(
+    (p) => p.books,
+  );
 
   const animatedBorderStyle = useAnimatedStyle(() => {
     return {
@@ -96,11 +105,18 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
     };
   });
 
+  const onEndReached = () => {
+    if (books.data || !recentlyAddedBooksPaginator.hasNextPage) return;
+
+    void recentlyAddedBooksPaginator.fetchNextPage();
+  };
+
   return (
     <Wrapper<Book>
       title="Search"
       flatList
-      data={books.data}
+      onEndReached={onEndReached}
+      data={books.data ?? recentlyAddedBooks?.flat()}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({item}) => (
         <SearchResults onPressBook={onPressBook} book={item} />
@@ -123,7 +139,11 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
             />
             {children}
           </Animated.View>
-          <View className="h-4" />
+          <View className="h-2" />
+          {!books.data && recentlyAddedBooks && (
+            <Text className="mx-4 font-semi text-zinc-500">Recently added</Text>
+          )}
+          <View className="h-2" />
         </>
       }
       renderSpacer={() => <View className="h-4" />}
