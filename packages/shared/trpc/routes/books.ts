@@ -28,5 +28,15 @@ export function setupBookRouter(
         orderBy: {totalListeners: 'desc'},
       });
     }),
+    getByQuery: pProcedure.input(z.string()).query(({input, ctx}) => {
+      return ctx.prisma.book.findMany({
+        where: {
+          title: {
+            contains: input,
+          },
+        },
+        orderBy: {title: 'asc'},
+      });
+    }),
   });
 }
