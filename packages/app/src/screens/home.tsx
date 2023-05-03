@@ -9,7 +9,6 @@ import BookCoverArt from '../components/book-cover-art';
 import {BlurView} from 'expo-blur';
 
 const Home: React.FC<HomeNavProps> = ({navigation}) => {
-  const {data: books} = trpc.books.getAll.useQuery();
   const discoverBooks = trpc.books.getRecommendations.useQuery();
   const {data: trendingBook} = trpc.books.getTrendingBook.useQuery();
 
@@ -25,7 +24,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
           contentContainerStyle={{paddingHorizontal: 16}}
           horizontal
           showsHorizontalScrollIndicator={false}
-          data={books}
+          data={discoverBooks.data}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <View className="w-3" />}
           renderItem={({item}) => (

@@ -29,6 +29,8 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   const scrollY = useSharedValue(0);
   const mutation = trpc.books.addListener.useMutation();
 
+  const isBookPlaying = player.currentBook?.id === book.id;
+
   const onScroll = useAnimatedScrollHandler({
     onScroll(event) {
       scrollY.value = event.contentOffset.y;
@@ -43,7 +45,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
       borderBottomColor: interpolateColor(
         scrollYOffset,
         [0, 50],
-        ['#fff', '#E4E4E7'],
+        ['#fff', '#a1a1aa'],
       ),
       borderBottomWidth: 1,
     };
@@ -157,7 +159,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
           <Ionicons name="send-outline" size={24} color="#3f3f46" />
         </ScalableButton>
       </AnimatedBlurView>
-      {scrollY.value < 50 && (
+      {scrollY.value < 50 && !isBookPlaying && (
         <Animated.View
           entering={FadeInDown.duration(300)}
           exiting={FadeOutDown.duration(300)}
