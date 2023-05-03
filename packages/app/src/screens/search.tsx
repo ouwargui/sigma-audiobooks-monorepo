@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
-import {TextInput, View} from 'react-native';
+import React, {PropsWithChildren, useEffect, useState} from 'react';
+import {TextInput, Text, View} from 'react-native';
 import Wrapper from '../components/wrapper';
 import {Ionicons} from '@expo/vector-icons';
 import Animated, {
+  SharedValue,
   interpolateColor,
   useAnimatedProps,
   useAnimatedStyle,
@@ -16,10 +17,59 @@ import {Book, SearchNavProps} from '../routes/types';
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
 const Search: React.FC<SearchNavProps> = ({navigation}) => {
-  const books = trpc.books.getAll.useQuery();
-
   const [inputValue, setInputValue] = useState('');
+  const [debouncedInputValue, setDebouncedInputValue] = useState('');
   const isInputFocused = useSharedValue(false);
+
+  const onPressBook = (book: Book) => {
+    navigation.navigate('Book', book);
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedInputValue(inputValue);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [inputValue]);
+
+  return (
+    <SearchWrapper
+      isInputFocused={isInputFocused}
+      onPressBook={onPressBook}
+      query={debouncedInputValue}
+    >
+      <TextInput
+        className="flex-1 text-zinc-600 font-semi text-base"
+        autoCapitalize="none"
+        hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
+        placeholderTextColor="#d4d8d4"
+        placeholder="What do you want to listen?"
+        value={inputValue}
+        onChangeText={setInputValue}
+        onFocus={() => (isInputFocused.value = true)}
+        onBlur={() => {
+          if (inputValue) return;
+          isInputFocused.value = false;
+        }}
+      />
+    </SearchWrapper>
+  );
+};
+
+type SearchWrapperProps = {
+  query: string;
+  isInputFocused: SharedValue<boolean>;
+  onPressBook: (book: Book) => void;
+} & PropsWithChildren;
+
+const SearchWrapper: React.FC<SearchWrapperProps> = ({
+  query,
+  isInputFocused,
+  onPressBook,
+  children,
+}) => {
+  const books = trpc.books.getByQuery.useQuery(query, {enabled: !!query});
 
   const animatedBorderStyle = useAnimatedStyle(() => {
     return {
@@ -46,14 +96,8 @@ const Search: React.FC<SearchNavProps> = ({navigation}) => {
     };
   });
 
-  if (!books.data) return null;
-
-  const onPressBook = (book: Book) => {
-    navigation.navigate('Book', book);
-  };
-
   return (
-    <Wrapper<(typeof books.data)[number]>
+    <Wrapper<Book>
       title="Search"
       flatList
       data={books.data}
@@ -61,6 +105,11 @@ const Search: React.FC<SearchNavProps> = ({navigation}) => {
       renderItem={({item}) => (
         <SearchResults onPressBook={onPressBook} book={item} />
       )}
+      renderEmpty={
+        <View className="flex-1 justify-center items-center">
+          <Text>No books for now :(</Text>
+        </View>
+      }
       renderHeader={
         <>
           <Animated.View
@@ -72,20 +121,7 @@ const Search: React.FC<SearchNavProps> = ({navigation}) => {
               size={24}
               animatedProps={animatedIconColor}
             />
-            <TextInput
-              className="flex-1 text-zinc-600 font-semi text-base"
-              autoCapitalize="none"
-              hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
-              placeholderTextColor="#d4d8d4"
-              placeholder="What do you want to listen?"
-              value={inputValue}
-              onChangeText={setInputValue}
-              onFocus={() => (isInputFocused.value = true)}
-              onBlur={() => {
-                if (inputValue) return;
-                isInputFocused.value = false;
-              }}
-            />
+            {children}
           </Animated.View>
           <View className="h-4" />
         </>

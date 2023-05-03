@@ -16,12 +16,13 @@ type ScrollViewProps = {
 
 type FlatListProps<T> = {
   flatList: true;
-  data: T[];
+  data?: T[];
   keyExtractor: (item: T) => string;
   renderItem: ListRenderItem<T>;
   renderHeader?: React.ReactElement;
   renderSpacer?: React.ComponentType;
   renderFooter?: React.ReactElement;
+  renderEmpty?: React.ReactElement;
 };
 
 type Props<T> = PropsWithChildren<
@@ -74,6 +75,7 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
           ListHeaderComponent={props.renderHeader}
           ItemSeparatorComponent={props.renderSpacer}
           ListFooterComponent={props.renderFooter}
+          ListEmptyComponent={props.renderEmpty}
         />
       ) : (
         <Animated.ScrollView

@@ -24,7 +24,7 @@ import PlayerProvider from './providers/player.provider';
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: 'https://audiobooks.guisantos.dev/api/trpc',
+      url: 'http://localhost:3000/api/trpc',
     }),
   ],
 });
