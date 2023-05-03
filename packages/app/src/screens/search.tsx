@@ -11,10 +11,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import {trpc} from '../utils/trpc';
 import SearchResults from '../components/search-results';
+import {Book, SearchNavProps} from '../routes/types';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
-const Search: React.FC = () => {
+const Search: React.FC<SearchNavProps> = ({navigation}) => {
   const books = trpc.books.getAll.useQuery();
 
   const [inputValue, setInputValue] = useState('');
@@ -47,13 +48,19 @@ const Search: React.FC = () => {
 
   if (!books.data) return null;
 
+  const onPressBook = (book: Book) => {
+    navigation.navigate('Book', book);
+  };
+
   return (
     <Wrapper<(typeof books.data)[number]>
       title="Search"
       flatList
       data={books.data}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={({item}) => <SearchResults book={item} />}
+      renderItem={({item}) => (
+        <SearchResults onPressBook={onPressBook} book={item} />
+      )}
       renderHeader={
         <>
           <Animated.View
@@ -66,7 +73,7 @@ const Search: React.FC = () => {
               animatedProps={animatedIconColor}
             />
             <TextInput
-              className="flex-1 text-zinc-600 font-semi text-base leading-none"
+              className="flex-1 text-zinc-600 font-semi text-base"
               autoCapitalize="none"
               hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
               placeholderTextColor="#d4d8d4"
@@ -80,10 +87,10 @@ const Search: React.FC = () => {
               }}
             />
           </Animated.View>
-          <View className="h-2" />
+          <View className="h-4" />
         </>
       }
-      renderSpacer={() => <View className="h-2" />}
+      renderSpacer={() => <View className="h-4" />}
       renderFooter={<View className="h-4" />}
     />
   );

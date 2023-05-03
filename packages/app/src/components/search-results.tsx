@@ -2,22 +2,42 @@ import React from 'react';
 import {View, Text} from 'react-native';
 import {Book} from '../routes/types';
 import BookCoverArt from './book-cover-art';
+import ScalableButton from './scalable-button';
 
 type Props = {
   book: Book;
+  onPressBook: (book: Book) => void;
 };
 
-const SearchResults: React.FC<Props> = ({book}) => {
+const SearchResults: React.FC<Props> = ({book, onPressBook}) => {
   return (
-    <View className="mx-4 flex-row">
-      <View className="w-20">
-        <BookCoverArt coverArtUrl={book.coverArtUrl} />
+    <ScalableButton scaleTo={0.95} onPress={() => onPressBook(book)}>
+      <View className="mx-4 flex-row">
+        <View className="w-20">
+          <BookCoverArt coverArtUrl={book.coverArtUrl} />
+        </View>
+        <View className="w-2" />
+        <View className="flex-1 py-4 justify-between items-start">
+          <View>
+            <Text className="text-base font-semi text-zinc-800 leading-5">
+              {book.title}
+            </Text>
+            <Text className="text-base font-regular text-zinc-500">
+              {book.author}
+            </Text>
+          </View>
+          <View>
+            <Text className="text-sm font-regular text-zinc-500">
+              {book.totalChapters} chapters
+            </Text>
+            <Text className="text-sm font-regular text-zinc-500">
+              {book.totalListeners}{' '}
+              {book.totalListeners === 1 ? 'listener' : 'listeners'}
+            </Text>
+          </View>
+        </View>
       </View>
-      <View className="w-2" />
-      <View className="flex-1 py-4">
-        <Text className="text-base font-semi text-zinc-700">{book.title}</Text>
-      </View>
-    </View>
+    </ScalableButton>
   );
 };
 
