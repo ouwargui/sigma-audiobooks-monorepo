@@ -1,6 +1,6 @@
 import React, {PropsWithChildren, useState} from 'react';
 import {BlurView} from 'expo-blur';
-import {View, Text, ListRenderItem} from 'react-native';
+import {View, Text, ListRenderItem, NativeScrollEvent} from 'react-native';
 import Animated, {
   interpolate,
   interpolateColor,
@@ -26,8 +26,14 @@ type FlatListProps<T> = {
   onEndReached?: () => void;
 };
 
+type BaseProps = {
+  title: string;
+  onScroll?: (event: NativeScrollEvent) => void;
+  renderStickyHeader?: React.ReactElement;
+};
+
 type Props<T> = PropsWithChildren<
-  {title: string} & (ScrollViewProps | FlatListProps<T>)
+  BaseProps & (ScrollViewProps | FlatListProps<T>)
 >;
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
@@ -45,6 +51,7 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
         'clamp',
       );
 
+      props.onScroll?.(event);
       runOnJS(setScrollYOffset)(value);
     },
   });
@@ -91,17 +98,18 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
           <View className="flex-1">{children}</View>
         </Animated.ScrollView>
       )}
-      <AnimatedBlurView
-        intensity={scrollYOffset}
-        tint="light"
-        className="top-0 left-0 right-0 absolute justify-end items-start"
-        style={[
-          {height: insets.top < 30 ? 80 : insets.top * 2},
-          animatedBorder,
-        ]}
-      >
-        <Text className="font-semi pl-3 text-5xl text-zinc-800">{title}</Text>
-      </AnimatedBlurView>
+      <View className="top-0 left-0 right-0 absolute justify-end items-start">
+        <AnimatedBlurView
+          intensity={scrollYOffset}
+          tint="light"
+          style={[animatedBorder, {paddingTop: insets.top}]}
+          className="w-full"
+        >
+          <Text className="font-semi pl-4 text-5xl text-zinc-800">{title}</Text>
+        </AnimatedBlurView>
+        <View className="h-2" />
+        <View className="w-full">{props.renderStickyHeader}</View>
+      </View>
     </View>
   );
 };

@@ -1,9 +1,10 @@
 import React, {PropsWithChildren, useEffect, useState} from 'react';
-import {TextInput, Text, View} from 'react-native';
+import {TextInput, Text, View, NativeScrollEvent} from 'react-native';
 import Wrapper from '../components/wrapper';
 import {Ionicons} from '@expo/vector-icons';
 import Animated, {
   SharedValue,
+  interpolate,
   interpolateColor,
   useAnimatedProps,
   useAnimatedStyle,
@@ -69,6 +70,8 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
   onPressBook,
   children,
 }) => {
+  const scrollYOffset = useSharedValue(0);
+
   const books = trpc.books.getByQuery.useQuery(query, {enabled: !!query});
   const recentlyAddedBooksPaginator =
     trpc.books.getRecentlyAdded.useInfiniteQuery(
@@ -90,6 +93,17 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
         ),
       ),
       gap: 10,
+      opacity: interpolate(scrollYOffset.value, [0, 30], [1, 0], 'clamp'),
+      transform: [
+        {
+          translateY: interpolate(
+            scrollYOffset.value,
+            [0, 20],
+            [0, -5],
+            'clamp',
+          ),
+        },
+      ],
     };
   });
 
@@ -111,9 +125,15 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
     void recentlyAddedBooksPaginator.fetchNextPage();
   };
 
+  const onScroll = (event: NativeScrollEvent) => {
+    'worklet';
+    scrollYOffset.value = event.contentOffset.y;
+  };
+
   return (
     <Wrapper<Book>
       title="Search"
+      onScroll={onScroll}
       flatList
       onEndReached={onEndReached}
       data={books.data ?? recentlyAddedBooks?.flat()}
@@ -126,20 +146,22 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
           <Text>No books for now :(</Text>
         </View>
       }
+      renderStickyHeader={
+        <Animated.View
+          style={animatedBorderStyle}
+          className="mx-4 rounded-xl border-2 justify-start items-center p-4 flex-row"
+        >
+          <AnimatedIcon
+            name="search"
+            size={24}
+            animatedProps={animatedIconColor}
+          />
+          {children}
+        </Animated.View>
+      }
       renderHeader={
         <>
-          <Animated.View
-            style={animatedBorderStyle}
-            className="mx-4 rounded-xl border-2 justify-start items-center p-4 flex-row"
-          >
-            <AnimatedIcon
-              name="search"
-              size={24}
-              animatedProps={animatedIconColor}
-            />
-            {children}
-          </Animated.View>
-          <View className="h-2" />
+          <View className="h-[75px]" />
           {!books.data && recentlyAddedBooks && (
             <Text className="mx-4 font-semi text-zinc-500">Recently added</Text>
           )}
