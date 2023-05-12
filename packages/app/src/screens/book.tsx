@@ -51,7 +51,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
     };
   });
 
-  const handlePlayListen = async () => {
+  const handleListenButton = async () => {
     await player.loadBook(book);
     mutation.mutate(book.id);
     navigation.navigate('main', {screen: 'Play', params: {shouldPlay: false}});
@@ -60,6 +60,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   const onShare = async () => {
     await Share.share({
       message: `Check out ${book.title} by ${book.author} on Sigma Audiobooks`,
+      url: `https://audiobooks.guisantos.dev/app/book/${book.id}`,
     });
   };
 
