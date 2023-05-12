@@ -167,8 +167,8 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
           className="absolute bottom-0 left-0 right-0 flex-row justify-center items-center"
         >
           <ScalableButton
-            style={{flex: 1}}
-            onPress={() => void handlePlayListen()}
+            className="flex-1"
+            onPress={() => void handleListenButton()}
           >
             <View className="flex-1 py-4 mx-10 justify-center items-center rounded-full bg-zinc-950">
               <Text className="text-zinc-50 font-bold text-lg">Listen</Text>

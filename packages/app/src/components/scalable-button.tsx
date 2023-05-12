@@ -22,6 +22,7 @@ type Props = PropsWithChildren<{
   scaleTo?: number;
   disabled?: boolean;
   bottomTabProps?: BottomTabBarButtonProps;
+  className?: string;
   style?: PressableProps['style'];
 }>;
 
@@ -55,6 +56,7 @@ const ScalableButton: React.FC<Props> = ({
       transform: [{scale: scaleValue}],
     };
   });
+
   return (
     <AnimatedPressable
       disabled={disabled}

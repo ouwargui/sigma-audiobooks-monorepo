@@ -44,7 +44,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
       <View style={{gap: 5}}>
         <Text className="ml-4 font-semi text-zinc-500">Trending</Text>
         <ScalableButton
-          style={{flex: 1}}
+          className="flex-1"
           scaleTo={0.95}
           onPress={() => {
             if (!trendingBook) return;
