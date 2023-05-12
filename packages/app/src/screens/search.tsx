@@ -6,6 +6,7 @@ import Animated, {
   SharedValue,
   interpolate,
   interpolateColor,
+  useAnimatedKeyboard,
   useAnimatedProps,
   useAnimatedStyle,
   useSharedValue,
@@ -71,6 +72,7 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
   children,
 }) => {
   const scrollYOffset = useSharedValue(0);
+  const keyboard = useAnimatedKeyboard();
 
   const books = trpc.books.getByQuery.useQuery(query, {enabled: !!query});
   const recentlyAddedBooksPaginator =
@@ -116,6 +118,12 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
           ['#d4d8d4', '#52525b'],
         ),
       ),
+    };
+  });
+
+  const animatedFooterHeight = useAnimatedStyle(() => {
+    return {
+      paddingBottom: keyboard.height.value === 0 ? 16 : keyboard.height.value,
     };
   });
 
@@ -169,7 +177,7 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
         </>
       }
       renderSpacer={() => <View className="h-4" />}
-      renderFooter={<View className="h-4" />}
+      renderFooter={<Animated.View style={animatedFooterHeight} />}
     />
   );
 };
