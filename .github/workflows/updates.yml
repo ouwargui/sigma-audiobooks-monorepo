@@ -1,11 +1,14 @@
-name: update
+name: EAS Update
 on:
-  push:
+  pull_request:
     branches:
       - main
+    types: [labeled]
 
 jobs:
   update:
+    if: github.event.label.name == 'eas-update'
+
     name: EAS Update
     runs-on: ubuntu-latest
     steps:
