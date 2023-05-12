@@ -41,6 +41,12 @@
         "projectId": "2672daef-44f6-4ef4-acff-c527df2c1e0b"
       }
     },
-    "owner": "ouwargui"
+    "owner": "ouwargui",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2672daef-44f6-4ef4-acff-c527df2c1e0b"
+    }
   }
 }

@@ -10,7 +10,8 @@
       "ios": {
         "resourceClass": "m-medium",
         "simulator": true
-      }
+      },
+      "channel": "dev"
     },
     "dev:device": {
       "developmentClient": true,
@@ -19,21 +20,24 @@
       "ios": {
         "resourceClass": "m-medium",
         "simulator": false
-      }
+      },
+      "channel": "dev"
     },
     "preview:simulator": {
       "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium",
         "simulator": true
-      }
+      },
+      "channel": "preview"
     },
     "preview:device": {
       "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium",
         "simulator": false
-      }
+      },
+      "channel": "preview"
     }
   },
   "submit": {
