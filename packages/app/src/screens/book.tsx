@@ -18,6 +18,7 @@ import Animated, {
 import ScalableButton from '../components/scalable-button';
 import {usePlayer} from '../hooks/usePlayer';
 import {trpc} from '../utils/trpc';
+import {useColorScheme} from '../hooks/useColorScheme';
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -25,6 +26,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   const book = route.params;
   const player = usePlayer();
   const insets = useSafeAreaInsets();
+  const {isDarkMode} = useColorScheme();
   const [scrollYOffset, setScrollYOfsset] = useState(0);
   const scrollY = useSharedValue(0);
   const mutation = trpc.books.addListener.useMutation();
@@ -41,11 +43,14 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   });
 
   const animatedBorder = useAnimatedStyle(() => {
+    const initialColor = isDarkMode ? '#18181b' : '#fff';
+    const finalColor = isDarkMode ? '#2c2c30' : '#a1a1aa';
+
     return {
       borderBottomColor: interpolateColor(
         scrollYOffset,
         [0, 50],
-        ['#fff', '#a1a1aa'],
+        [initialColor, finalColor],
       ),
       borderBottomWidth: 1,
     };
@@ -65,7 +70,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-white dark:bg-zinc-900">
       <Animated.ScrollView
         onScroll={onScroll}
         scrollEventThrottle={16}
@@ -81,10 +86,10 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
             </View>
             <View
               style={{gap: 5}}
-              className="border-[1px] border-zinc-500 p-1 flex-row rounded-full justify-between items-center"
+              className="border-[1px] border-zinc-500 dark:border-zinc-400 p-1 flex-row rounded-full justify-between items-center"
             >
-              <View className="w-2 h-2 bg-blue-700 rounded-full"></View>
-              <View className="w-2 h-2 bg-zinc-500 rounded-full"></View>
+              <View className="w-2 h-2 bg-blue-700 dark:bg-blue-500 rounded-full"></View>
+              <View className="w-2 h-2 bg-zinc-500 dark:bg-zinc-400 rounded-full"></View>
             </View>
           </View>
           <View className="h-4" />
@@ -95,9 +100,9 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
             {book.tags.map((tag, idx) => (
               <View
                 key={idx}
-                className="justify-between items-center rounded-full border-[1px] border-zinc-700 p-2"
+                className="justify-between items-center rounded-full border-[1px] border-zinc-700 dark:border-zinc-200 p-2"
               >
-                <Text className="font-medium text-zinc-800 text-base capitalize">
+                <Text className="font-semi text-zinc-800 dark:text-zinc-100 text-base capitalize">
                   #{tag}
                 </Text>
               </View>
@@ -106,10 +111,10 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
           <View className="h-4" />
           <View className="flex-row mx-4">
             <View className="flex-1 justify-center">
-              <Text className="font-semi text-2xl text-zinc-800">
+              <Text className="font-semi text-2xl text-zinc-800 dark:text-zinc-100">
                 {book.title}
               </Text>
-              <Text className="font-regular text-base text-zinc-500">
+              <Text className="font-regular text-base text-zinc-500 dark:text-zinc-400">
                 {book.author}
               </Text>
             </View>
@@ -120,25 +125,27 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
                     className="flex-row rounded-md items-center justify-center bg-blue-600 py-2 px-3"
                     style={{gap: 5}}
                   >
-                    <Ionicons name="star-outline" size={20} color="white" />
-                    <Text className="text-white font-bold text-base">4,45</Text>
+                    <Ionicons name="star-outline" size={20} color="#fafafa" />
+                    <Text className="text-zinc-50 font-bold text-base">
+                      4,45
+                    </Text>
                   </View>
                 </ScalableButton>
                 <View style={{gap: -5}}>
-                  <Text className="font-regular text-base text-zinc-500">
+                  <Text className="font-regular text-base text-zinc-500 dark:text-zinc-400">
                     100K
                   </Text>
-                  <Text className="font-regular text-base text-zinc-500">
+                  <Text className="font-regular text-base text-zinc-500 dark:text-zinc-400">
                     Reviews
                   </Text>
                 </View>
               </View>
-              <View className="h-full w-[1px] bg-zinc-300" />
+              <View className="h-full w-[1px] bg-zinc-300 dark:bg-zinc-600" />
             </View>
           </View>
           <View className="h-4" />
           <View className="mx-4">
-            <Text className="font-semi text-base text-justify text-zinc-600">
+            <Text className="font-semi text-base text-justify text-zinc-800 dark:text-zinc-100">
               {book.description}
             </Text>
           </View>
@@ -146,7 +153,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
       </Animated.ScrollView>
       <AnimatedBlurView
         className="absolute left-0 top-0 right-0 flex-row justify-between items-center px-4 pb-4"
-        tint="light"
+        tint={isDarkMode ? 'dark' : 'light'}
         intensity={scrollYOffset}
         style={[
           {paddingTop: insets.top <= 20 ? 24 : insets.top},
@@ -154,10 +161,18 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
         ]}
       >
         <ScalableButton onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="#3f3f46" />
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color={isDarkMode ? '#f4f4f5' : '#18181b'}
+          />
         </ScalableButton>
         <ScalableButton onPress={() => void onShare()}>
-          <Ionicons name="send-outline" size={24} color="#3f3f46" />
+          <Ionicons
+            name="send-outline"
+            size={24}
+            color={isDarkMode ? '#f4f4f5' : '#18181b'}
+          />
         </ScalableButton>
       </AnimatedBlurView>
       {scrollY.value < 50 && !isBookPlaying && (
@@ -171,7 +186,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
             className="flex-1"
             onPress={() => void handleListenButton()}
           >
-            <View className="flex-1 py-4 mx-10 justify-center items-center rounded-full bg-zinc-950">
+            <View className="flex-1 py-4 mx-10 justify-center items-center rounded-full bg-blue-600">
               <Text className="text-zinc-50 font-bold text-lg">Listen</Text>
             </View>
           </ScalableButton>
