@@ -20,6 +20,7 @@ import Router from './routes';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {setupPlayer} from './services/PlaybackService';
 import PlayerProvider from './providers/player.provider';
+import UpdateProvider from './providers/update-provider';
 
 const trpcClient = trpc.createClient({
   links: [
@@ -58,9 +59,11 @@ const App: React.FC = () => {
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView style={{flex: 1}}>
-            <Router />
-            <StatusBar style="auto" />
+            <UpdateProvider>
+              <Router />
+            </UpdateProvider>
           </GestureHandlerRootView>
+          <StatusBar style="dark" />
         </QueryClientProvider>
       </trpc.Provider>
     </PlayerProvider>
