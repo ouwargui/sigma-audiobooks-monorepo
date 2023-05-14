@@ -1,5 +1,4 @@
 import React from 'react';
-import {StatusBar} from 'expo-status-bar';
 import {httpBatchLink} from '@trpc/react-query';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {trpc} from './utils/trpc';
@@ -19,8 +18,9 @@ import {
 import Router from './routes';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {setupPlayer} from './services/PlaybackService';
-import PlayerProvider from './providers/player.provider';
+import PlayerProvider from './providers/player-provider';
 import UpdateProvider from './providers/update-provider';
+import ThemeProvider from './providers/theme-provider';
 
 const trpcClient = trpc.createClient({
   links: [
@@ -59,11 +59,12 @@ const App: React.FC = () => {
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView style={{flex: 1}}>
-            <UpdateProvider>
-              <Router />
-            </UpdateProvider>
+            <ThemeProvider>
+              <UpdateProvider>
+                <Router />
+              </UpdateProvider>
+            </ThemeProvider>
           </GestureHandlerRootView>
-          <StatusBar style="dark" />
         </QueryClientProvider>
       </trpc.Provider>
     </PlayerProvider>

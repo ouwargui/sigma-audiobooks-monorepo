@@ -10,7 +10,7 @@ import BookCoverArt from '../components/book-cover-art';
 import {useColorScheme} from '../hooks/useColorScheme';
 
 const Home: React.FC<HomeNavProps> = ({navigation}) => {
-  const [isDarkMode] = useColorScheme();
+  const {isDarkMode} = useColorScheme();
   const discoverBooks = trpc.books.getRecommendations.useQuery();
   const {data: trendingBook} = trpc.books.getTrendingBook.useQuery();
 
