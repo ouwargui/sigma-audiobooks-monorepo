@@ -1,24 +1,4 @@
-import {useEffect, useState} from 'react';
-import {Appearance} from 'react-native';
+import {useContext} from 'react';
+import {ThemeContext} from '../providers/theme-provider';
 
-const useColorScheme = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    const colorScheme = Appearance.getColorScheme();
-
-    setIsDarkMode(colorScheme === 'dark');
-  }, []);
-
-  useEffect(() => {
-    const unsub = Appearance.addChangeListener((pref) => {
-      setIsDarkMode(pref.colorScheme === 'dark');
-    });
-
-    return () => unsub.remove();
-  }, []);
-
-  return [isDarkMode];
-};
-
-export {useColorScheme};
+export const useColorScheme = () => useContext(ThemeContext);
