@@ -15,10 +15,12 @@ import Animated, {
 import {trpc} from '../utils/trpc';
 import SearchResults from '../components/search-results';
 import {Book, SearchNavProps} from '../routes/types';
+import {useColorScheme} from '../hooks/useColorScheme';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
 const Search: React.FC<SearchNavProps> = ({navigation}) => {
+  const {isDarkMode} = useColorScheme();
   const [inputValue, setInputValue] = useState('');
   const [debouncedInputValue, setDebouncedInputValue] = useState('');
   const isInputFocused = useSharedValue(false);
@@ -40,12 +42,13 @@ const Search: React.FC<SearchNavProps> = ({navigation}) => {
       isInputFocused={isInputFocused}
       onPressBook={onPressBook}
       query={debouncedInputValue}
+      isDarkMode={isDarkMode}
     >
       <TextInput
-        className="flex-1 text-zinc-600 font-semi text-base"
+        className="flex-1 text-zinc-600 dark:text-zinc-200 font-semi text-base"
         autoCapitalize="none"
         hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
-        placeholderTextColor="#d4d8d4"
+        placeholderTextColor={isDarkMode ? '#52525b' : '#d4d8d4'}
         placeholder="What do you want to listen?"
         value={inputValue}
         onChangeText={setInputValue}
@@ -63,6 +66,7 @@ type SearchWrapperProps = {
   query: string;
   isInputFocused: SharedValue<boolean>;
   onPressBook: (book: Book) => void;
+  isDarkMode: boolean;
 } & PropsWithChildren;
 
 const SearchWrapper: React.FC<SearchWrapperProps> = ({
@@ -70,6 +74,7 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
   isInputFocused,
   onPressBook,
   children,
+  isDarkMode,
 }) => {
   const scrollYOffset = useSharedValue(0);
   const keyboard = useAnimatedKeyboard();
@@ -86,12 +91,14 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
   );
 
   const animatedBorderStyle = useAnimatedStyle(() => {
+    const colors = ['#52525b', '#e4e4e7'];
+
     return {
       borderColor: withTiming(
         interpolateColor(
           isInputFocused.value ? 1 : 0,
           [0, 1],
-          ['#d4d8d4', '#52525b'],
+          isDarkMode ? colors : colors.reverse(),
         ),
       ),
       gap: 10,
@@ -110,12 +117,14 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
   });
 
   const animatedIconColor = useAnimatedProps(() => {
+    const colors = ['#52525b', '#e4e4e7'];
+
     return {
       color: withTiming(
         interpolateColor(
           isInputFocused.value ? 1 : 0,
           [0, 1],
-          ['#d4d8d4', '#52525b'],
+          isDarkMode ? colors : colors.reverse(),
         ),
       ),
     };
@@ -171,7 +180,9 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
         <>
           <View className="h-[75px]" />
           {!books.data && recentlyAddedBooks && (
-            <Text className="mx-4 font-semi text-zinc-500">Recently added</Text>
+            <Text className="mx-4 font-semi text-zinc-500 dark:text-zinc-400">
+              Recently added
+            </Text>
           )}
           <View className="h-2" />
         </>

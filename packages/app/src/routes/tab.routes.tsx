@@ -32,8 +32,8 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          borderColor: isDarkMode ? '#2c2c30' : '#a1a1aa',
           backgroundColor: isDarkMode ? '#18181b' : '#fff',
+          borderTopColor: isDarkMode ? '#2c2c30' : '#a1a1aa',
         },
       }}
     >
