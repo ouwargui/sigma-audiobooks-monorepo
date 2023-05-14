@@ -14,6 +14,7 @@ import Animated, {
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import {convertMsToTime} from '../utils/time-format';
 import {usePlayer} from '../hooks/usePlayer';
+import {useColorScheme} from '../hooks/useColorScheme';
 
 const VOLUME_SLIDER_SIZE = 240;
 const VOLUME_INTERVAL = 100;
@@ -25,6 +26,9 @@ type Intervals = {
 
 const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
   const params = route.params;
+  const {isDarkMode} = useColorScheme();
+  const disabledColor = isDarkMode ? '#4c4c30' : '#d4d4d8';
+  const trackControlIconColor = isDarkMode ? '#f4f4f5' : '#18181b';
   const previousSliderOffsetX = useSharedValue(0);
   const isKnobActive = useSharedValue(false);
   const previousVolumeSliderOffsetX = useSharedValue(0);
@@ -227,7 +231,7 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
   }, [params, player]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-zinc-900">
       <View className="w-44 self-center mt-4">
         <ScalableButton
           scaleTo={0.95}
@@ -243,30 +247,42 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
         <View className="h-4" />
         <View className="flex-row justify-between items-center px-3">
           <ScalableButton onPress={() => console.log('bookmark')}>
-            <Ionicons name="bookmark-outline" size={24} color="#71717a" />
+            <Ionicons
+              name="bookmark-outline"
+              size={24}
+              color={isDarkMode ? '#a1a1aa' : '#71717a'}
+            />
           </ScalableButton>
           <ScalableButton onPress={() => void toggleRate()}>
-            <Text className="font-regular text-xl text-zinc-500">
+            <Text className="font-regular text-xl text-zinc-500 dark:text-zinc-300">
               {player.currentRate}x
             </Text>
           </ScalableButton>
           <ScalableButton onPress={() => console.log('ellipsis')}>
-            <Ionicons name="ellipsis-horizontal" size={24} color="#71717a" />
+            <Ionicons
+              name="ellipsis-horizontal"
+              size={24}
+              color={isDarkMode ? '#a1a1aa' : '#71717a'}
+            />
           </ScalableButton>
         </View>
       </View>
       <View className="h-6" />
       <View className="flex-row mx-8 items-center justify-between">
         <View className="flex-1" style={{gap: -5}}>
-          <Text className="font-semi text-2xl text-zinc-800">
+          <Text className="font-semi text-2xl text-zinc-800 dark:text-zinc-100">
             {player.currentBook?.title}
           </Text>
-          <Text className="font-regular text-base text-zinc-500">
+          <Text className="font-regular text-base text-zinc-500 dark:text-zinc-400">
             {player.currentBook?.author}
           </Text>
         </View>
         <ScalableButton onPress={() => console.log('rate')}>
-          <Ionicons name="star-outline" size={24} color="#71717a" />
+          <Ionicons
+            name="star-outline"
+            size={24}
+            color={isDarkMode ? '#a1a1aa' : '#71717a'}
+          />
         </ScalableButton>
       </View>
       <View className="h-4" />
@@ -274,14 +290,14 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
         <GestureDetector gesture={trackingDragGesture}>
           <Animated.View
             hitSlop={{top: 20, bottom: 20}}
-            className="h-2 bg-zinc-300 rounded-full justify-start"
+            className="h-2 bg-zinc-300 dark:bg-zinc-600 rounded-full justify-start"
           >
             <Animated.View
               style={sliderAnimatedStyle}
-              className="absolute h-full bg-blue-700 items-end justify-center rounded-full"
+              className="absolute h-full bg-blue-700 dark:bg-blue-500 items-end justify-center rounded-full"
             >
               <Animated.View
-                className="w-4 h-4 bg-blue-700 rounded-full"
+                className="w-4 h-4 bg-blue-700 dark:bg-blue-500 rounded-full"
                 style={knobAnimatedStyle}
               />
             </Animated.View>
@@ -289,13 +305,13 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
         </GestureDetector>
       </View>
       <View className="flex-row px-8 justify-between w-full">
-        <Text className="font-regular text-sm text-zinc-500">
+        <Text className="font-regular text-sm text-zinc-500 dark:text-zinc-400">
           {convertMsToTime(player.position * 1000)}
         </Text>
-        <Text className="font-regular text-sm text-zinc-500">
+        <Text className="font-regular text-sm text-zinc-500 dark:text-zinc-400">
           Chapter {player.currentChapter}/{player.currentBook?.totalChapters}
         </Text>
-        <Text className="font-regular text-sm text-zinc-500">
+        <Text className="font-regular text-sm text-zinc-500 dark:text-zinc-400">
           {convertMsToTime(player.duration * 1000)}
         </Text>
       </View>
@@ -310,8 +326,8 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
             size={30}
             color={
               player.currentChapter - 1 < 1 && player.position <= 3
-                ? 'lightgray'
-                : '#09090b'
+                ? disabledColor
+                : trackControlIconColor
             }
           />
         </ScalableButton>
@@ -322,8 +338,8 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
             color={
               (player.currentBook?.totalChapters ?? 0) <
               player.currentChapter + 1
-                ? 'lightgray'
-                : '#09090b'
+                ? disabledColor
+                : trackControlIconColor
             }
           />
         </ScalableButton>
@@ -339,8 +355,8 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
             color={
               (player.currentBook?.totalChapters ?? 0) <
               player.currentChapter + 1
-                ? 'lightgray'
-                : '#09090b'
+                ? disabledColor
+                : trackControlIconColor
             }
           />
         </ScalableButton>
@@ -351,20 +367,24 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
           onPressOut={onPressOutVolumeDown}
           onPress={onPressVolumeDown}
         >
-          <Ionicons name="volume-off-outline" size={24} color="#09090b" />
+          <Ionicons
+            name="volume-off-outline"
+            size={24}
+            color={isDarkMode ? '#a1a1aa' : '#71717a'}
+          />
         </ScalableButton>
         <GestureDetector gesture={volumeDragGesture}>
           <Animated.View
             hitSlop={{top: 20, bottom: 20}}
-            className="w-60 bg-zinc-200 h-1 mx-4 rounded-full"
+            className="w-60 bg-zinc-200 dark:bg-zinc-700 h-1 mx-4 rounded-full"
           >
             <Animated.View
               style={volumeSliderAnimatedStyle}
-              className="absolute h-full bg-zinc-400 items-end justify-center rounded-full"
+              className="absolute h-full bg-zinc-400 dark:bg-zinc-500 items-end justify-center rounded-full"
             >
               <Animated.View
                 style={volumeKnobAnimatedStyle}
-                className="w-4 h-4 bg-zinc-700 rounded-full"
+                className="w-4 h-4 bg-zinc-700 dark:bg-zinc-200 rounded-full"
               />
             </Animated.View>
           </Animated.View>
@@ -374,7 +394,11 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
           onPressOut={onPressOutVolumeUp}
           onPress={onPressVolumeUp}
         >
-          <Ionicons name="volume-low-outline" size={24} color="#09090b" />
+          <Ionicons
+            name="volume-low-outline"
+            size={24}
+            color={isDarkMode ? '#a1a1aa' : '#71717a'}
+          />
         </ScalableButton>
       </View>
     </SafeAreaView>
