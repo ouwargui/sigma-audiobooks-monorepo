@@ -9,6 +9,7 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useColorScheme} from '../hooks/useColorScheme';
 
 type ScrollViewProps = {
   flatList?: false;
@@ -39,6 +40,7 @@ type Props<T> = PropsWithChildren<
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
+  const {isDarkMode} = useColorScheme();
   const insets = useSafeAreaInsets();
   const [scrollYOffset, setScrollYOffset] = useState(0);
 
@@ -57,18 +59,21 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
   });
 
   const animatedBorder = useAnimatedStyle(() => {
+    const initialColor = isDarkMode ? '#18181b' : '#fff';
+    const finalColor = isDarkMode ? '#2c2c30' : '#a1a1aa';
+
     return {
       borderBottomColor: interpolateColor(
         scrollYOffset,
         [0, 50],
-        ['#fff', '#a1a1aa'],
+        [initialColor, finalColor],
       ),
       borderBottomWidth: 0.5,
     };
   });
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-white dark:bg-zinc-900">
       {props.flatList ? (
         <Animated.FlatList
           showsVerticalScrollIndicator={false}
@@ -101,11 +106,13 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
       <View className="top-0 left-0 right-0 absolute justify-end items-start">
         <AnimatedBlurView
           intensity={scrollYOffset}
-          tint="light"
+          tint={isDarkMode ? 'dark' : 'light'}
           style={[animatedBorder, {paddingTop: insets.top}]}
           className="w-full"
         >
-          <Text className="font-semi pl-4 text-5xl text-zinc-800">{title}</Text>
+          <Text className="font-semi pl-4 text-5xl text-zinc-800 dark:text-zinc-100">
+            {title}
+          </Text>
         </AnimatedBlurView>
         <View className="h-2" />
         <View className="w-full">{props.renderStickyHeader}</View>

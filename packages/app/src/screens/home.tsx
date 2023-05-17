@@ -1,14 +1,16 @@
 import React from 'react';
 import {FlatList, ImageBackground, Text, View} from 'react-native';
+import {BlurView} from 'expo-blur';
 import Wrapper from '../components/wrapper';
 import ScalableButton from '../components/scalable-button';
 import {Ionicons} from '@expo/vector-icons';
 import {trpc} from '../utils/trpc';
 import {HomeNavProps} from '../routes/types';
 import BookCoverArt from '../components/book-cover-art';
-import {BlurView} from 'expo-blur';
+import {useColorScheme} from '../hooks/useColorScheme';
 
 const Home: React.FC<HomeNavProps> = ({navigation}) => {
+  const {isDarkMode} = useColorScheme();
   const discoverBooks = trpc.books.getRecommendations.useQuery();
   const {data: trendingBook} = trpc.books.getTrendingBook.useQuery();
 
@@ -19,7 +21,9 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
   return (
     <Wrapper title="Books">
       <View style={{gap: 5}}>
-        <Text className="ml-4 font-semi text-zinc-500">Discover</Text>
+        <Text className="ml-4 font-semi text-zinc-500 dark:text-zinc-400">
+          Discover
+        </Text>
         <FlatList
           contentContainerStyle={{paddingHorizontal: 16}}
           horizontal
@@ -42,7 +46,9 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
       </View>
       <View className="h-4" />
       <View style={{gap: 5}}>
-        <Text className="ml-4 font-semi text-zinc-500">Trending</Text>
+        <Text className="ml-4 font-semi text-zinc-500 dark:text-zinc-400">
+          Trending
+        </Text>
         <ScalableButton
           className="flex-1"
           scaleTo={0.95}
@@ -76,13 +82,15 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
       </View>
       <View className="h-4" />
       <View className="mx-4 flex-1" style={{gap: 5}}>
-        <Text className="font-semi text-zinc-500">Continue listening</Text>
-        <View className="h-[1] bg-zinc-400" />
+        <Text className="font-semi text-zinc-500 dark:text-zinc-400">
+          Continue listening
+        </Text>
+        <View className="h-[1] bg-zinc-400 dark:bg-zinc-600" />
         {discoverBooks.data?.map((book) => (
           <React.Fragment key={book.id}>
             <View className="p-1 flex-row flex-1 justify-between items-center">
               <View className="flex-1">
-                <Text className="font-semi text-base text-zinc-800">
+                <Text className="font-semi text-base text-zinc-800 dark:text-zinc-100">
                   {book.title}
                 </Text>
               </View>
@@ -90,20 +98,20 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
                 scaleTo={0.95}
                 onPress={() => console.log('continue')}
               >
-                <View className="rounded-full flex-row border-2 p-1 border-zinc-800 justify-between items-center">
+                <View className="rounded-full flex-row border-2 p-1 border-zinc-800 dark:border-zinc-300 justify-between items-center">
                   <Ionicons
                     name="play-circle-outline"
                     size={28}
-                    className="bg-zinc-800"
+                    color={isDarkMode ? '#fafafa' : '#27272a'}
                   />
-                  <Text className="font-semi text-base text-zinc-800">
+                  <Text className="font-semi text-base text-zinc-800 dark:text-zinc-100">
                     {`${Math.ceil(Math.random() * 24)}`.padStart(2, '0')}:
                     {`${Math.ceil(Math.random() * 59)}`.padStart(2, '0')}
                   </Text>
                 </View>
               </ScalableButton>
             </View>
-            <View className="h-[1] bg-zinc-400" />
+            <View className="h-[1] bg-zinc-400 dark:bg-zinc-600" />
           </React.Fragment>
         ))}
       </View>

@@ -29,7 +29,7 @@
         "resourceClass": "m-medium",
         "simulator": true
       },
-      "channel": "preview"
+      "channel": "main"
     },
     "preview:device": {
       "distribution": "internal",
@@ -37,7 +37,7 @@
         "resourceClass": "m-medium",
         "simulator": false
       },
-      "channel": "preview"
+      "channel": "main"
     }
   },
   "submit": {

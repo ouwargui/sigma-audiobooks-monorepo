@@ -38,4 +38,4 @@ jobs:
         run: yarn install
 
       - name: Publish update
-        run: yarn workspace @sigma-audiobooks/app eas update --branch preview --message "${{ github.event.pull_request.title }}"
+        run: yarn workspace @sigma-audiobooks/app eas update --branch main --message "${{ github.event.pull_request.title }}"

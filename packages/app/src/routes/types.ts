@@ -18,6 +18,7 @@ export type TabParamList = {
 };
 
 export type RootParamList = {
+  loading: undefined;
   main: NavigatorScreenParams<TabParamList>;
   Book: Book;
 };

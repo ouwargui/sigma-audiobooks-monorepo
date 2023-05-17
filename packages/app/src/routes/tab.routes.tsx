@@ -10,10 +10,15 @@ import Profile from '../screens/profile';
 import ScalableButton from '../components/scalable-button';
 import {MainNavProps, ScreenNames, TabParamList} from './types';
 import {usePlayer} from '../hooks/usePlayer';
+import {useColorScheme} from '../hooks/useColorScheme';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
+  const {isDarkMode} = useColorScheme();
+  const focusedColor = isDarkMode ? '#f4f4f5' : '#18181b';
+  const unfocusedColor = isDarkMode ? '#a1a1aa' : '#71717a';
+  const disabledColor = isDarkMode ? '#4c4c30' : '#d4d4d8';
   const {currentBook} = usePlayer();
   const navigateTo = (screenName: ScreenNames) => {
     navigation.navigate(screenName as never);
@@ -27,7 +32,8 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          borderColor: '#a1a1aa',
+          backgroundColor: isDarkMode ? '#18181b' : '#fff',
+          borderTopColor: isDarkMode ? '#2c2c30' : '#a1a1aa',
         },
       }}
     >
@@ -42,7 +48,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
               size={28}
-              color={focused ? '#18181b' : '#71717a'}
+              color={focused ? focusedColor : unfocusedColor}
             />
           ),
         }}
@@ -58,7 +64,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
             <Ionicons
               name="search"
               size={28}
-              color={focused ? '#18181b' : '#71717a'}
+              color={focused ? focusedColor : unfocusedColor}
             />
           ),
         }}
@@ -78,7 +84,13 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
             <Ionicons
               name={focused ? 'play-circle' : 'play-circle-outline'}
               size={28}
-              color={playDisabled ? '#d4d4d8' : focused ? '#18181b' : '#71717a'}
+              color={
+                playDisabled
+                  ? disabledColor
+                  : focused
+                  ? focusedColor
+                  : unfocusedColor
+              }
             />
           ),
         }}
@@ -94,7 +106,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
             <Ionicons
               name={focused ? 'library' : 'library-outline'}
               size={28}
-              color={focused ? '#18181b' : '#71717a'}
+              color={focused ? focusedColor : unfocusedColor}
             />
           ),
         }}
@@ -110,7 +122,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
             <Ionicons
               name={focused ? 'person' : 'person-outline'}
               size={28}
-              color={focused ? '#18181b' : '#71717a'}
+              color={focused ? focusedColor : unfocusedColor}
             />
           ),
         }}
