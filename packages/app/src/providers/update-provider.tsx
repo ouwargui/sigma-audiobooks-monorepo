@@ -15,6 +15,10 @@ const UpdateProvider: React.FC<PropsWithChildren> = ({children}) => {
 
   const fetchUpdates = async () => {
     try {
+      if (__DEV__) {
+        return setFinishedUpdating(true);
+      }
+
       const update = await ExpoUpdates.checkForUpdateAsync();
 
       if (update.isAvailable) {
