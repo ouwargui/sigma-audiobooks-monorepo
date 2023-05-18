@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useEffect, useRef, useState} from 'react';
+import React, {PropsWithChildren, useEffect, useState} from 'react';
 import {TextInput, Text, View, NativeScrollEvent} from 'react-native';
 import Wrapper from '../components/wrapper';
 import {Ionicons} from '@expo/vector-icons';
@@ -76,7 +76,6 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
   children,
   isDarkMode,
 }) => {
-  const scrollRef = useRef<Animated.FlatList<Book>>(null);
   const scrollYOffset = useSharedValue(0);
   const keyboard = useAnimatedKeyboard();
 
@@ -150,7 +149,6 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
 
   return (
     <Wrapper
-      scrollRef={scrollRef}
       title="Search"
       onScroll={onScroll}
       flatList

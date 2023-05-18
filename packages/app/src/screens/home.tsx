@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {FlatList, ImageBackground, Text, View} from 'react-native';
 import {BlurView} from 'expo-blur';
 import Wrapper from '../components/wrapper';
@@ -8,10 +8,8 @@ import {trpc} from '../utils/trpc';
 import {HomeNavProps} from '../routes/types';
 import BookCoverArt from '../components/book-cover-art';
 import {useColorScheme} from '../hooks/useColorScheme';
-import Animated from 'react-native-reanimated';
 
 const Home: React.FC<HomeNavProps> = ({navigation}) => {
-  const scrollRef = useRef<Animated.ScrollView>(null);
   const {isDarkMode} = useColorScheme();
   const discoverBooks = trpc.books.getRecommendations.useQuery();
   const {data: trendingBook} = trpc.books.getTrendingBook.useQuery();
@@ -21,7 +19,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
   }
 
   return (
-    <Wrapper title="Books" scrollRef={scrollRef}>
+    <Wrapper title="Books">
       <View style={{gap: 5}}>
         <Text className="ml-4 font-semi text-zinc-500 dark:text-zinc-400">
           Discover
