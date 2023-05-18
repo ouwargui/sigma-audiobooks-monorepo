@@ -8,21 +8,18 @@ import Play from '../screens/play';
 import Library from '../screens/library';
 import Profile from '../screens/profile';
 import ScalableButton from '../components/scalable-button';
-import {MainNavProps, ScreenNames, TabParamList} from './types';
+import {MainNavProps, TabParamList} from './types';
 import {usePlayer} from '../hooks/usePlayer';
 import {useColorScheme} from '../hooks/useColorScheme';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
+const TabRoutes: React.FC<MainNavProps> = () => {
   const {isDarkMode} = useColorScheme();
   const focusedColor = isDarkMode ? '#f4f4f5' : '#18181b';
   const unfocusedColor = isDarkMode ? '#a1a1aa' : '#71717a';
   const disabledColor = isDarkMode ? '#4c4c30' : '#d4d4d8';
   const {currentBook} = usePlayer();
-  const navigateTo = (screenName: ScreenNames) => {
-    navigation.navigate(screenName as never);
-  };
 
   const playDisabled = !currentBook;
 
@@ -41,9 +38,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
         name="Home"
         component={Home}
         options={{
-          tabBarButton: (props) => (
-            <ScalableButton {...props} onPress={() => navigateTo('Home')} />
-          ),
+          tabBarButton: (props) => <ScalableButton bottomTabProps={props} />,
           tabBarIcon: ({focused}) => (
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
@@ -57,9 +52,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
         name="Search"
         component={Search}
         options={{
-          tabBarButton: (props) => (
-            <ScalableButton {...props} onPress={() => navigateTo('Search')} />
-          ),
+          tabBarButton: (props) => <ScalableButton bottomTabProps={props} />,
           tabBarIcon: ({focused}) => (
             <Ionicons
               name="search"
@@ -74,11 +67,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
         component={Play}
         options={{
           tabBarButton: (props) => (
-            <ScalableButton
-              disabled={playDisabled}
-              {...props}
-              onPress={() => navigateTo('Play')}
-            />
+            <ScalableButton disabled={playDisabled} bottomTabProps={props} />
           ),
           tabBarIcon: ({focused}) => (
             <Ionicons
@@ -99,9 +88,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
         name="Library"
         component={Library}
         options={{
-          tabBarButton: (props) => (
-            <ScalableButton {...props} onPress={() => navigateTo('Library')} />
-          ),
+          tabBarButton: (props) => <ScalableButton bottomTabProps={props} />,
           tabBarIcon: ({focused}) => (
             <Ionicons
               name={focused ? 'library' : 'library-outline'}
@@ -115,9 +102,7 @@ const TabRoutes: React.FC<MainNavProps> = ({navigation}) => {
         name="Profile"
         component={Profile}
         options={{
-          tabBarButton: (props) => (
-            <ScalableButton {...props} onPress={() => navigateTo('Profile')} />
-          ),
+          tabBarButton: (props) => <ScalableButton bottomTabProps={props} />,
           tabBarIcon: ({focused}) => (
             <Ionicons
               name={focused ? 'person' : 'person-outline'}
