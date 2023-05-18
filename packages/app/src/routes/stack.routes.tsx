@@ -9,11 +9,11 @@ import Updater from '../screens/updater';
 const Stack = createNativeStackNavigator<RootParamList>();
 
 const StackRoutes: React.FC = () => {
-  const {finishedUpdating} = useUpdates();
+  const {finishedUpdating, isDeepLinking} = useUpdates();
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      {!finishedUpdating ? (
+      {!finishedUpdating && !isDeepLinking ? (
         <Stack.Screen name="loading" component={Updater} />
       ) : (
         <Stack.Group>
