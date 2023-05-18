@@ -12,6 +12,7 @@ const Router: React.FC = () => {
       screens: {
         Book: 'book/:id',
       },
+      initialRouteName: 'main',
     },
   };
 
