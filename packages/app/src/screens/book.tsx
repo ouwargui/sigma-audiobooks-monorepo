@@ -29,7 +29,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   const {isDarkMode} = useColorScheme();
   const [scrollYOffset, setScrollYOfsset] = useState(0);
   const scrollY = useSharedValue(0);
-  const {data: book} = trpc.books.getById.useQuery(bookId);
+  const {data: book} = trpc.books.getById.useQuery(Number(bookId));
   const mutation = trpc.books.addListener.useMutation();
 
   const isBookPlaying = player.currentBook?.id === bookId;
@@ -165,7 +165,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
           animatedBorder,
         ]}
       >
-        <ScalableButton onPress={() => navigation.goBack()}>
+        <ScalableButton onPress={navigation.goBack}>
           <Ionicons
             name="chevron-back"
             size={24}
