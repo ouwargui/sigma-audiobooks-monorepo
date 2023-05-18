@@ -10,13 +10,16 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useColorScheme} from '../hooks/useColorScheme';
+import {useScrollToTop} from '@react-navigation/native';
 
 type ScrollViewProps = {
   flatList?: false;
+  scrollRef?: React.RefObject<Animated.ScrollView>;
 };
 
 type FlatListProps<T> = {
   flatList: true;
+  scrollRef?: React.RefObject<Animated.FlatList<T>>;
   data?: T[];
   keyExtractor: (item: T) => string;
   renderItem: ListRenderItem<T>;
@@ -40,6 +43,9 @@ type Props<T> = PropsWithChildren<
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
+  // @ts-expect-error - Didn't find a way to type this properly
+  useScrollToTop(props.scrollRef ?? {current: null});
+
   const {isDarkMode} = useColorScheme();
   const insets = useSafeAreaInsets();
   const [scrollYOffset, setScrollYOffset] = useState(0);
@@ -76,6 +82,7 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
     <View className="flex-1 bg-white dark:bg-zinc-900">
       {props.flatList ? (
         <Animated.FlatList
+          ref={props.scrollRef}
           showsVerticalScrollIndicator={false}
           onScroll={onScroll}
           scrollEventThrottle={16}
@@ -93,6 +100,7 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
         />
       ) : (
         <Animated.ScrollView
+          ref={props.scrollRef}
           showsVerticalScrollIndicator={false}
           onScroll={onScroll}
           scrollEventThrottle={16}
