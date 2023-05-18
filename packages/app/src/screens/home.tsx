@@ -15,7 +15,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
   const {data: trendingBook} = trpc.books.getTrendingBook.useQuery();
 
   if (!discoverBooks.data && discoverBooks.isLoading) {
-    return null;
+    return <View className="flex-1 bg-white dark:bg-zinc-900" />;
   }
 
   return (

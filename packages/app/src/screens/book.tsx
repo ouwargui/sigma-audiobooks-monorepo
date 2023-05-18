@@ -23,15 +23,16 @@ import {useColorScheme} from '../hooks/useColorScheme';
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 const Book: React.FC<BookNavProps> = ({route, navigation}) => {
-  const book = route.params;
+  const {id: bookId} = route.params;
   const player = usePlayer();
   const insets = useSafeAreaInsets();
   const {isDarkMode} = useColorScheme();
   const [scrollYOffset, setScrollYOfsset] = useState(0);
   const scrollY = useSharedValue(0);
+  const {data: book} = trpc.books.getById.useQuery(bookId);
   const mutation = trpc.books.addListener.useMutation();
 
-  const isBookPlaying = player.currentBook?.id === book.id;
+  const isBookPlaying = player.currentBook?.id === bookId;
 
   const onScroll = useAnimatedScrollHandler({
     onScroll(event) {
@@ -55,6 +56,10 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
       borderBottomWidth: 1,
     };
   });
+
+  if (!book) {
+    return <View className="flex-1 bg-white dark:bg-zinc-900" />;
+  }
 
   const handleListenButton = async () => {
     await player.loadBook(book);
