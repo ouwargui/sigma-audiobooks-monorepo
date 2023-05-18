@@ -20,7 +20,7 @@ export type TabParamList = {
 export type RootParamList = {
   loading: undefined;
   main: NavigatorScreenParams<TabParamList>;
-  Book: Book;
+  Book: {id: number};
 };
 
 export type ScreenNames = keyof TabParamList | keyof RootParamList;
