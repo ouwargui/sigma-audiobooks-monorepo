@@ -1,5 +1,6 @@
 import React, {PropsWithChildren, useState} from 'react';
 import * as ExpoUpdates from 'expo-updates';
+import {Alert} from 'react-native';
 
 type UpdateContextType = {
   finishedCheckingForUpdate: boolean;
@@ -25,7 +26,14 @@ const UpdateProvider: React.FC<PropsWithChildren> = ({children}) => {
     if (event.type === ExpoUpdates.UpdateEventType.UPDATE_AVAILABLE) {
       setFinishedCheckingForUpdate(true);
       setUpdateAvailable(true);
-      return;
+      return Alert.alert('Update available', 'Do you want to update now?', [
+        {
+          text: 'Yes',
+          onPress: () => void ExpoUpdates.reloadAsync(),
+          isPreferred: true,
+        },
+        {text: 'No', style: 'cancel'},
+      ]);
     }
 
     if (event.type === ExpoUpdates.UpdateEventType.ERROR) {
