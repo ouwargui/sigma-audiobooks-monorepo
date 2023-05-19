@@ -16,6 +16,8 @@ const timingConfig = {duration: 50, easing: Easing.linear};
 
 type Props = PropsWithChildren<{
   onPress?: () => void;
+  onPressIn?: () => void;
+  onPressOut?: () => void;
   onLongPress?: (e: GestureResponderEvent) => void;
   scaleTo?: number;
   disabled?: boolean;
@@ -27,6 +29,8 @@ type Props = PropsWithChildren<{
 const ScalableButton: React.FC<Props> = ({
   children,
   onPress,
+  onPressIn,
+  onPressOut,
   onLongPress,
   scaleTo = 0.85,
   disabled = false,
@@ -63,9 +67,11 @@ const ScalableButton: React.FC<Props> = ({
       onLongPress={onLongPress}
       onPressIn={() => {
         isPressed.value = true;
+        onPressIn?.();
       }}
       onPressOut={() => {
         isPressed.value = false;
+        onPressOut?.();
       }}
       style={[scaleAnimationStyle, style, bottomTabProps?.style]}
     >
