@@ -1,0 +1,26 @@
+name: EAS Build or Update
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  fingerprint:
+    runs-on: ubuntu-latest
+    name: Compare Expo fingerprints
+    outputs:
+      matches: ${{ steps.fingerprint.outputs.matches }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: yarn
+      - uses: wwdrew/expo-fingerprint-action@v1.0
+        id: fingerprint
+      - uses: EndBug/add-and-commit@v9
+        with:
+          message: 'chore: update expo fingerprint [skip actions]'
+          committer_name: GitHub Actions
+          committer_email: actions@github.com
+          author_name: GitHub Actions
