@@ -18,11 +18,6 @@ jobs:
           cache: yarn
       - uses: wwdrew/expo-fingerprint-action@v1.0
         id: fingerprint
-      - uses: EndBug/add-and-commit@v9
-        with:
-          message: 'chore: update expo fingerprint [skip actions]'
-          committer_name: GitHub Actions
-          committer_email: actions@github.com
 
   build:
     runs-on: ubuntu-latest
