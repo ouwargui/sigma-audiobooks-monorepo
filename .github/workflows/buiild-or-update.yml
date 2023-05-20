@@ -1,0 +1,83 @@
+name: EAS Build or Update
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  fingerprint:
+    runs-on: ubuntu-latest
+    name: Compare Expo fingerprints
+    outputs:
+      matches: ${{ steps.fingerprint.outputs.matches }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: yarn
+      - uses: wwdrew/expo-fingerprint-action@v1.0
+        id: fingerprint
+      - uses: EndBug/add-and-commit@v9
+        with:
+          message: 'chore: update expo fingerprint [skip actions]'
+          committer_name: GitHub Actions
+          committer_email: actions@github.com
+
+  build:
+    runs-on: ubuntu-latest
+    name: Run build task based on fingerprint changes
+    needs: fingerprint
+    if: ${{ needs.fingerprint.outputs.matchnes == 'false' }}
+    steps:
+      - name: Check for EXPO_TOKEN
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
+            exit 1
+          fi
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: yarn
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Build on EAS
+        run: yarn workspace @sigma-audiobooks/app eas build --platform ios --profile preview:device --non-interactive
+
+  update:
+    runs-on: ubuntu-latest
+    name: Run update task based on no fingerprint changes
+    needs: fingerprint
+    if: ${{ needs.fingerprint.outputs.matchnes == 'true' }}
+    steps:
+      - name: Check for EXPO_TOKEN
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
+            exit 1
+          fi
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: yarn
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Publish update
+        run: yarn workspace @sigma-audiobooks/app eas update --branch main --message "${{ github.event.pull_request.title }}"'5'

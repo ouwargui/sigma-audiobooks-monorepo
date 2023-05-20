@@ -1,9 +1,6 @@
 name: EAS Update
 on:
-  pull_request:
-    branches:
-      - main
-    types: [labeled]
+  workflow_dispatch:
 
 jobs:
   update:
