@@ -231,7 +231,7 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
   }, [params, player]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-zinc-900">
+    <SafeAreaView className="flex-1 bg-light dark:bg-dark">
       <View className="w-44 self-center mt-4">
         <ScalableButton
           scaleTo={0.95}
@@ -290,14 +290,14 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
         <GestureDetector gesture={trackingDragGesture}>
           <Animated.View
             hitSlop={{top: 20, bottom: 20}}
-            className="h-2 bg-zinc-300 dark:bg-zinc-600 rounded-full justify-start"
+            className="h-2 bg-contrast-light dark:bg-contrast-dark rounded-full justify-start"
           >
             <Animated.View
               style={sliderAnimatedStyle}
-              className="absolute h-full bg-blue-700 dark:bg-blue-500 items-end justify-center rounded-full"
+              className="absolute h-full bg-blue-light dark:bg-blue-dark items-end justify-center rounded-full"
             >
               <Animated.View
-                className="w-4 h-4 bg-blue-700 dark:bg-blue-500 rounded-full"
+                className="w-4 h-4 bg-blue-light dark:bg-blue-dark rounded-full"
                 style={knobAnimatedStyle}
               />
             </Animated.View>
@@ -376,15 +376,15 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
         <GestureDetector gesture={volumeDragGesture}>
           <Animated.View
             hitSlop={{top: 20, bottom: 20}}
-            className="w-60 bg-zinc-200 dark:bg-zinc-700 h-1 mx-4 rounded-full"
+            className="w-60 bg-placeholder dark:bg-placeholder-dark h-1 mx-4 rounded-full"
           >
             <Animated.View
               style={volumeSliderAnimatedStyle}
-              className="absolute h-full bg-zinc-400 dark:bg-zinc-500 items-end justify-center rounded-full"
+              className="absolute h-full bg-contrast-dark dark:bg-contrast-light items-end justify-center rounded-full"
             >
               <Animated.View
                 style={volumeKnobAnimatedStyle}
-                className="w-4 h-4 bg-zinc-700 dark:bg-zinc-200 rounded-full"
+                className="w-4 h-4 bg-contrast-dark dark:bg-contrast-light rounded-full"
               />
             </Animated.View>
           </Animated.View>

@@ -15,7 +15,9 @@ const BookCoverArt: React.FC<Props> = ({coverArtUrl}) => {
         source={{uri: coverArtUrl}}
         onLoad={() => setImageLoaded(true)}
       />
-      {!imageLoaded && <View className="absolute w-full h-full bg-gray-100" />}
+      {!imageLoaded && (
+        <View className="absolute w-full h-full bg-placeholder" />
+      )}
     </View>
   );
 };
