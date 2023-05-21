@@ -1,11 +1,12 @@
 import React from 'react';
 import {View, Text} from 'react-native';
+import Wrapper from '../components/wrapper';
 
 const Library: React.FC = () => {
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-900">
+    <Wrapper title="Library">
       <Text>Library</Text>
-    </View>
+    </Wrapper>
   );
 };
 

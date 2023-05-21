@@ -45,7 +45,7 @@ const Search: React.FC<SearchNavProps> = ({navigation}) => {
       isDarkMode={isDarkMode}
     >
       <TextInput
-        className="flex-1 text-zinc-600 dark:text-zinc-200 font-semi text-base"
+        className="flex-1 text-primary-light dark:text-primary-dark font-semi text-base"
         autoCapitalize="none"
         hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
         placeholderTextColor={isDarkMode ? '#52525b' : '#d4d8d4'}
@@ -180,7 +180,7 @@ const SearchWrapper: React.FC<SearchWrapperProps> = ({
         <>
           <View className="h-[75px]" />
           {!books.data && recentlyAddedBooks && (
-            <Text className="mx-4 font-semi text-zinc-500 dark:text-zinc-400">
+            <Text className="mx-4 font-semi text-secondary-light dark:text-secondary-dark">
               Recently added
             </Text>
           )}

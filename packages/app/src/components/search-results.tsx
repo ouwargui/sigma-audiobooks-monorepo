@@ -19,18 +19,18 @@ const SearchResults: React.FC<Props> = ({book, onPressBook}) => {
         <View className="w-2" />
         <View className="flex-1 py-4 justify-between items-start">
           <View>
-            <Text className="text-base font-semi text-zinc-800 dark:text-zinc-200 leading-5">
+            <Text className="text-base font-semi text-primary-light dark:text-primary-dark leading-5">
               {book.title}
             </Text>
-            <Text className="text-base font-regular text-zinc-500 dark:text-zinc-400">
+            <Text className="text-base font-regular text-secondary-light dark:text-secondary-dark">
               {book.author}
             </Text>
           </View>
           <View>
-            <Text className="text-sm font-regular text-zinc-500 dark:text-zinc-400">
+            <Text className="text-sm font-regular text-secondary-light dark:text-secondary-dark">
               {book.totalChapters} chapters
             </Text>
-            <Text className="text-sm font-regular text-zinc-500 dark:text-zinc-400">
+            <Text className="text-sm font-regular text-secondary-light dark:text-secondary-dark">
               {book.totalListeners}{' '}
               {book.totalListeners === 1 ? 'listener' : 'listeners'}
             </Text>
