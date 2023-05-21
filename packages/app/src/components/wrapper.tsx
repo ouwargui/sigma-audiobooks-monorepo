@@ -77,7 +77,7 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
   });
 
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-900">
+    <View className="flex-1 bg-light dark:bg-dark">
       {props.flatList ? (
         <Animated.FlatList
           ref={scrollRef}
@@ -116,7 +116,7 @@ const Wrapper = <T,>({children, title, ...props}: Props<T>) => {
           style={[animatedBorder, {paddingTop: insets.top}]}
           className="w-full"
         >
-          <Text className="font-semi pl-4 text-5xl text-zinc-800 dark:text-zinc-100">
+          <Text className="font-semi pl-4 text-5xl text-primary-light dark:text-primary-dark">
             {title}
           </Text>
         </AnimatedBlurView>

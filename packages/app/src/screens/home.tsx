@@ -21,7 +21,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
   return (
     <Wrapper title="Books">
       <View style={{gap: 5}}>
-        <Text className="ml-4 font-semi text-zinc-500 dark:text-zinc-400">
+        <Text className="ml-4 font-semi text-secondary-light dark:text-secondary-dark">
           Discover
         </Text>
         <FlatList
@@ -46,7 +46,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
       </View>
       <View className="h-4" />
       <View style={{gap: 5}}>
-        <Text className="ml-4 font-semi text-zinc-500 dark:text-zinc-400">
+        <Text className="ml-4 font-semi text-secondary-light dark:text-secondary-dark">
           Trending
         </Text>
         <ScalableButton
@@ -67,14 +67,14 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
             </ImageBackground>
             <View className="flex-1" style={{gap: 20}}>
               <View style={{gap: -5}}>
-                <Text className="font-semi text-lg text-zinc-50 leading-5">
+                <Text className="font-semi text-lg text-primary-dark leading-5">
                   {trendingBook?.title}
                 </Text>
-                <Text className="font-semi text-zinc-300">Now reading: 1K</Text>
+                <Text className="font-semi text-label">Now reading: 1K</Text>
               </View>
               <View style={{gap: -5}}>
-                <Text className="font-semi text-zinc-300">44K</Text>
-                <Text className="font-semi text-zinc-300">Reviews</Text>
+                <Text className="font-semi text-label">44K</Text>
+                <Text className="font-semi text-label">Reviews</Text>
               </View>
             </View>
           </View>
@@ -82,7 +82,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
       </View>
       <View className="h-4" />
       <View className="mx-4 flex-1" style={{gap: 5}}>
-        <Text className="font-semi text-zinc-500 dark:text-zinc-400">
+        <Text className="font-semi text-secondary-light dark:text-secondary-dark">
           Continue listening
         </Text>
         <View className="h-[1] bg-zinc-400 dark:bg-zinc-600" />
@@ -90,7 +90,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
           <React.Fragment key={book.id}>
             <View className="p-1 flex-row flex-1 justify-between items-center">
               <View className="flex-1">
-                <Text className="font-semi text-base text-zinc-800 dark:text-zinc-100">
+                <Text className="font-semi text-base text-primary-light dark:text-primary-dark">
                   {book.title}
                 </Text>
               </View>
@@ -104,7 +104,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
                     size={28}
                     color={isDarkMode ? '#fafafa' : '#27272a'}
                   />
-                  <Text className="font-semi text-base text-zinc-800 dark:text-zinc-100">
+                  <Text className="font-semi text-base text-primary-light dark:text-primary-dark">
                     {`${Math.ceil(Math.random() * 24)}`.padStart(2, '0')}:
                     {`${Math.ceil(Math.random() * 59)}`.padStart(2, '0')}
                   </Text>

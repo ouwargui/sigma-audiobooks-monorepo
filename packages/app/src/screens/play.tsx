@@ -254,7 +254,7 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
             />
           </ScalableButton>
           <ScalableButton onPress={() => void toggleRate()}>
-            <Text className="font-regular text-xl text-zinc-500 dark:text-zinc-300">
+            <Text className="font-regular text-xl text-secondary-light dark:text-secondary-dark">
               {player.currentRate}x
             </Text>
           </ScalableButton>
@@ -270,10 +270,10 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
       <View className="h-6" />
       <View className="flex-row mx-8 items-center justify-between">
         <View className="flex-1" style={{gap: -5}}>
-          <Text className="font-semi text-2xl text-zinc-800 dark:text-zinc-100">
+          <Text className="font-semi text-2xl text-primary-light dark:text-primary-dark">
             {player.currentBook?.title}
           </Text>
-          <Text className="font-regular text-base text-zinc-500 dark:text-zinc-400">
+          <Text className="font-regular text-base text-secondary-light dark:text-secondary-dark">
             {player.currentBook?.author}
           </Text>
         </View>
@@ -305,13 +305,13 @@ const Play: React.FC<PlayNavProps> = ({navigation, route}) => {
         </GestureDetector>
       </View>
       <View className="flex-row px-8 justify-between w-full">
-        <Text className="font-regular text-sm text-zinc-500 dark:text-zinc-400">
+        <Text className="font-regular text-sm text-secondary-light dark:text-secondary-dark">
           {convertMsToTime(player.position * 1000)}
         </Text>
-        <Text className="font-regular text-sm text-zinc-500 dark:text-zinc-400">
+        <Text className="font-regular text-sm text-secondary-light dark:text-secondary-dark">
           Chapter {player.currentChapter}/{player.currentBook?.totalChapters}
         </Text>
-        <Text className="font-regular text-sm text-zinc-500 dark:text-zinc-400">
+        <Text className="font-regular text-sm text-secondary-light dark:text-secondary-dark">
           {convertMsToTime(player.duration * 1000)}
         </Text>
       </View>

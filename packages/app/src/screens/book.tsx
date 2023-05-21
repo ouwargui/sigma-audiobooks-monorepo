@@ -107,7 +107,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
                 key={idx}
                 className="justify-between items-center rounded-full border-[1px] border-zinc-700 dark:border-zinc-200 p-2"
               >
-                <Text className="font-semi text-zinc-800 dark:text-zinc-100 text-base capitalize">
+                <Text className="font-semi text-primary-light dark:text-primary-dark text-base capitalize">
                   #{tag}
                 </Text>
               </View>
@@ -116,10 +116,10 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
           <View className="h-4" />
           <View className="flex-row mx-4">
             <View className="flex-1 justify-center">
-              <Text className="font-semi text-2xl text-zinc-800 dark:text-zinc-100">
+              <Text className="font-semi text-2xl text-primary-light dark:text-primary-dark">
                 {book.title}
               </Text>
-              <Text className="font-regular text-base text-zinc-500 dark:text-zinc-400">
+              <Text className="font-regular text-base text-secondary-light dark:text-secondary-dark">
                 {book.author}
               </Text>
             </View>
@@ -131,16 +131,16 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
                     style={{gap: 5}}
                   >
                     <Ionicons name="star-outline" size={20} color="#fafafa" />
-                    <Text className="text-zinc-50 font-bold text-base">
+                    <Text className="text-primary-dark font-bold text-base">
                       4,45
                     </Text>
                   </View>
                 </ScalableButton>
                 <View style={{gap: -5}}>
-                  <Text className="font-regular text-base text-zinc-500 dark:text-zinc-400">
+                  <Text className="font-regular text-base text-secondary-light dark:text-secondary-dark">
                     100K
                   </Text>
-                  <Text className="font-regular text-base text-zinc-500 dark:text-zinc-400">
+                  <Text className="font-regular text-base text-secondary-light dark:text-secondary-dark">
                     Reviews
                   </Text>
                 </View>
@@ -150,7 +150,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
           </View>
           <View className="h-4" />
           <View className="mx-4">
-            <Text className="font-semi text-base text-justify text-zinc-800 dark:text-zinc-100">
+            <Text className="font-semi text-base text-justify text-primary-light dark:text-primary-dark">
               {book.description}
             </Text>
           </View>
@@ -192,7 +192,9 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
             onPress={() => void handleListenButton()}
           >
             <View className="flex-1 py-4 mx-10 justify-center items-center rounded-full bg-blue-600">
-              <Text className="text-zinc-50 font-bold text-lg">Listen</Text>
+              <Text className="text-primary-dark font-bold text-lg">
+                Listen
+              </Text>
             </View>
           </ScalableButton>
         </Animated.View>
