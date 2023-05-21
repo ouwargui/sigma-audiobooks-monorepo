@@ -25,6 +25,7 @@ jobs:
         id: fingerprint
         with:
           project-path: ./packages/app
+          fingerprint-path: ./packages/app
       - uses: EndBug/add-and-commit@v9
         with:
           message: 'chore: update expo fingerprint [skip actions]'
