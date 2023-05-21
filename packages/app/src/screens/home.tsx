@@ -15,7 +15,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
   const {data: trendingBook} = trpc.books.getTrendingBook.useQuery();
 
   if (!discoverBooks.data && discoverBooks.isLoading) {
-    return <View className="flex-1 bg-white dark:bg-zinc-900" />;
+    return <View className="flex-1 bg-light dark:bg-dark" />;
   }
 
   return (
@@ -85,7 +85,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
         <Text className="font-semi text-secondary-light dark:text-secondary-dark">
           Continue listening
         </Text>
-        <View className="h-[1] bg-zinc-400 dark:bg-zinc-600" />
+        <View className="h-[1] bg-placeholder dark:bg-placeholder-dark" />
         {discoverBooks.data?.map((book) => (
           <React.Fragment key={book.id}>
             <View className="p-1 flex-row flex-1 justify-between items-center">
@@ -111,7 +111,7 @@ const Home: React.FC<HomeNavProps> = ({navigation}) => {
                 </View>
               </ScalableButton>
             </View>
-            <View className="h-[1] bg-zinc-400 dark:bg-zinc-600" />
+            <View className="h-[1] bg-placeholder dark:bg-placeholder-dark" />
           </React.Fragment>
         ))}
       </View>

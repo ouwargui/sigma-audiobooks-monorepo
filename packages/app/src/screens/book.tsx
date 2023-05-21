@@ -58,7 +58,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   });
 
   if (!book) {
-    return <View className="flex-1 bg-white dark:bg-zinc-900" />;
+    return <View className="flex-1 bg-light dark:bg-dark" />;
   }
 
   const handleListenButton = async () => {
@@ -75,7 +75,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
   };
 
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-900">
+    <View className="flex-1 bg-light dark:bg-dark">
       <Animated.ScrollView
         onScroll={onScroll}
         scrollEventThrottle={16}
@@ -93,8 +93,8 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
               style={{gap: 5}}
               className="border-[1px] border-zinc-500 dark:border-zinc-400 p-1 flex-row rounded-full justify-between items-center"
             >
-              <View className="w-2 h-2 bg-blue-700 dark:bg-blue-500 rounded-full"></View>
-              <View className="w-2 h-2 bg-zinc-500 dark:bg-zinc-400 rounded-full"></View>
+              <View className="w-2 h-2 bg-blue-light dark:bg-blue-dark rounded-full"></View>
+              <View className="w-2 h-2 bg-secondary-light dark:bg-secondary-dark rounded-full"></View>
             </View>
           </View>
           <View className="h-4" />
@@ -127,7 +127,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
               <View className="justify-between">
                 <ScalableButton onPress={() => console.log('rate')}>
                   <View
-                    className="flex-row rounded-md items-center justify-center bg-blue-600 py-2 px-3"
+                    className="flex-row rounded-md items-center justify-center bg-blue-light dark:bg-blue-dark py-2 px-3"
                     style={{gap: 5}}
                   >
                     <Ionicons name="star-outline" size={20} color="#fafafa" />
@@ -145,7 +145,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
                   </Text>
                 </View>
               </View>
-              <View className="h-full w-[1px] bg-zinc-300 dark:bg-zinc-600" />
+              <View className="h-full w-[1px] bg-secondary-light dark:bg-secondary-dark" />
             </View>
           </View>
           <View className="h-4" />
@@ -191,7 +191,7 @@ const Book: React.FC<BookNavProps> = ({route, navigation}) => {
             className="flex-1"
             onPress={() => void handleListenButton()}
           >
-            <View className="flex-1 py-4 mx-10 justify-center items-center rounded-full bg-blue-600">
+            <View className="flex-1 py-4 mx-10 justify-center items-center rounded-full bg-blue-light dark:bg-blue-dark">
               <Text className="text-primary-dark font-bold text-lg">
                 Listen
               </Text>
