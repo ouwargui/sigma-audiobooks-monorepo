@@ -18,6 +18,9 @@ jobs:
           cache: yarn
       - uses: wwdrew/expo-fingerprint-action@v1.0
         id: fingerprint
+        with:
+          project-path: ./packages/app
+          fingerprint-path: ./packages/app/.expo-fingerprint.json
 
   build:
     runs-on: ubuntu-latest
